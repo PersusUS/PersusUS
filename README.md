@@ -110,7 +110,7 @@
 <div align="center">
 
 <img src="assets/g-shark.gif" width="198" align="middle" alt="" />
-<img src="assets/s-now.svg" width="564" align="middle" alt="A shell session. PS&gt; Start-TalkSeries -Topic AI -At Universidad de Sevilla. PS&gt; Invoke-Research -Target TPU -Goal state of the art. PS&gt; Build-Perseo -Capability Listen, Watch." />
+<img src="assets/s-now.svg" width="621" align="middle" alt="Organising the AI talks at the Universidad de Sevilla. Research on pushing the TPU state of the art. Building Perseo, the assistant that listens and watches." />
 
 </div>
 
