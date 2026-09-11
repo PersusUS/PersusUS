@@ -27,7 +27,7 @@ MONO = glob.glob(os.path.join(
     os.path.dirname(matplotlib.__file__),
     "mpl-data", "fonts", "ttf", "DejaVuSansMono.ttf"))[0]
 # VT323 carries no CJK, and the Noto Sans SC that Windows ships is 17.8 MB for
-# the thirteen characters wanted here, so `.build/subset-cjk.py` cuts it down to
+# the six characters wanted here, so `.build/subset-cjk.py` cuts it down to
 # just those. Noto is under the SIL Open Font License, which travels with it in
 # NotoSansSC-OFL.txt.
 CJK = ".build/NotoSansSC-subset.ttf"
@@ -93,8 +93,8 @@ def svg(lines, name, size=20, leading=1.0, colors=None, font=FONT,
     block in a second file falls in behind the one above it.
 
     `notes` sets (line, text) pairs in the margin the short lines leave on the
-    right, on the same baseline as the line they are given, in the second
-    face. They fade up once the block has finished playing itself out.
+    right, in the second face. The line may be fractional, which sets the note
+    between two of them. They fade up once the block has finished playing.
     """
     t = Typesetter(font, size)
     line_h = size * leading
@@ -254,14 +254,11 @@ TAGLINE = [
 TAGLINE_MODES = ["type", "type", "wipe", "wipe"]
 
 BLOCKS = {
-    # Two lines of Evangelion in the margin the short lines leave: the
-    # Instrumentality Project over his name, and Shinji's mantra beside the
-    # line about the parts of AI that break.
+    # The Instrumentality Project, in the margin the two short lines leave.
+    # Half a line down puts it across both of them rather than on either.
     "tagline": (dict(size=30, leading=1.15, colors=[FG, FG, DIM, DIM],
-                     animate=TAGLINE_MODES, notes=[
-                         (0, "人類補完計画"),
-                         (1, "逃げちゃダメだ"),
-                     ]), TAGLINE),
+                     animate=TAGLINE_MODES,
+                     notes=[(0.5, "人類補完計画")]), TAGLINE),
     # Tags is a second file, so it cannot share a clock with the block above
     # it - it can only be held back by what that block is known to take. A
     # sweep tolerates the few milliseconds the two images load apart; a typed
