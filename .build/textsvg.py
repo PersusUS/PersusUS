@@ -26,6 +26,11 @@ FONT = ".build/VT323-Regular.ttf"
 MONO = glob.glob(os.path.join(
     os.path.dirname(matplotlib.__file__),
     "mpl-data", "fonts", "ttf", "DejaVuSansMono.ttf"))[0]
+# VT323 carries no CJK, and the Noto Sans SC that Windows ships is 17.8 MB for
+# the thirteen characters wanted here, so `.build/subset-cjk.py` cuts it down to
+# just those. Noto is under the SIL Open Font License, which travels with it in
+# NotoSansSC-OFL.txt.
+CJK = ".build/NotoSansSC-subset.ttf"
 OUT = "assets"
 
 GROUND = "#0d1117"      # GitHub dark canvas
@@ -78,13 +83,18 @@ class Typesetter:
 
 
 def svg(lines, name, size=20, leading=1.0, colors=None, font=FONT,
-        pad=PAD, border=False, animate=None, delay=0.0):
+        pad=PAD, border=False, animate=None, delay=0.0,
+        notes=None, note_size=24):
     """Render lines of text to assets/<name>.svg, reusing each glyph outline.
 
     Pass `animate` a mode per line - "type" to have it typed a character at a
     time behind a cursor, "wipe" to have it swept in - and the block plays
     itself out on load. `delay` holds the whole sequence back, which is how a
     block in a second file falls in behind the one above it.
+
+    `notes` sets (line, text) pairs in the margin the short lines leave on the
+    right, on the same baseline as the line they are given, in the second
+    face. They fade up once the block has finished playing itself out.
     """
     t = Typesetter(font, size)
     line_h = size * leading
@@ -96,6 +106,13 @@ def svg(lines, name, size=20, leading=1.0, colors=None, font=FONT,
     used = sorted({ch for line in lines for ch in line if ch != " " and t.path(ch)})
     ids = {ch: "g%d" % i for i, ch in enumerate(used)}
     defs = "".join('<path id="%s" d="%s"/>' % (ids[ch], t.path(ch)) for ch in used)
+
+    if notes:
+        tn = Typesetter(CJK, note_size)
+        marks = sorted({ch for _, text in notes for ch in text if tn.path(ch)})
+        nids = {ch: "j%d" % i for i, ch in enumerate(marks)}
+        defs += "".join('<path id="%s" d="%s"/>' % (nids[ch], tn.path(ch))
+                        for ch in marks)
 
     parts = ['<svg xmlns="http://www.w3.org/2000/svg" '
              'xmlns:xlink="http://www.w3.org/1999/xlink" width="%d" height="%d" '
@@ -125,6 +142,27 @@ def svg(lines, name, size=20, leading=1.0, colors=None, font=FONT,
     if animate:
         parts.extend(_animation(lines, animate, t, size, line_h, pad,
                                 round(w), round(h), delay))
+
+    if notes:
+        # Painted after the covers, so a cover parked to the right of the line
+        # it has just uncovered cannot sit on top of the margin.
+        if animate:
+            parts.append("<style>@keyframes fade{to{opacity:1}}"
+                         ".nt{opacity:0;animation:fade .6s %.3fs forwards}"
+                         "@media (prefers-reduced-motion:reduce)"
+                         "{.nt{opacity:1;animation:none}}</style>"
+                         % (delay + _runtime(lines, animate)))
+        for i, text in notes:
+            baseline = pad + line_h * i + size * 0.78
+            x = (w - pad - tn.width(text)) / tn.scale
+            parts.append('<g class="nt" fill="%s" transform="translate(0 %.2f) '
+                         'scale(%.5f %.5f)">'
+                         % (DIM, baseline, tn.scale, -tn.scale))
+            for ch in text:
+                if ch in nids:
+                    parts.append('<use xlink:href="#%s" x="%.1f"/>' % (nids[ch], x))
+                x += tn.advance(ch) / tn.scale
+            parts.append("</g>")
 
     parts.append("</svg>")
 
@@ -216,8 +254,14 @@ TAGLINE = [
 TAGLINE_MODES = ["type", "type", "wipe", "wipe"]
 
 BLOCKS = {
+    # Two lines of Evangelion in the margin the short lines leave: the
+    # Instrumentality Project over his name, and Shinji's mantra beside the
+    # line about the parts of AI that break.
     "tagline": (dict(size=30, leading=1.15, colors=[FG, FG, DIM, DIM],
-                     animate=TAGLINE_MODES), TAGLINE),
+                     animate=TAGLINE_MODES, notes=[
+                         (0, "人類補完計画"),
+                         (1, "逃げちゃダメだ"),
+                     ]), TAGLINE),
     # Tags is a second file, so it cannot share a clock with the block above
     # it - it can only be held back by what that block is known to take. A
     # sweep tolerates the few milliseconds the two images load apart; a typed
