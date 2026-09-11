@@ -34,6 +34,7 @@ DIM = "#8b949e"
 RULE = "#30363d"        # GitHub's own border grey
 RADIUS = 18             # px the bordered blocks are rounded by
 PAD = 16                # px of ground around the text
+PROMPT = "PS> "         # the shell prompt the Now block is set behind
 
 
 class Typesetter:
@@ -71,15 +72,24 @@ class Typesetter:
 
 def svg(lines, name, size=20, leading=1.0, colors=None, font=FONT,
         pad=PAD, border=False):
-    """Render lines of text to assets/<name>.svg, reusing each glyph outline."""
+    """Render lines of text to assets/<name>.svg, reusing each glyph outline.
+
+    A line is either a string or, where one line needs two inks - a shell
+    prompt in grey ahead of the command in white - a list of (text, colour)
+    runs that are set one after another on the same baseline.
+    """
     t = Typesetter(font, size)
     line_h = size * leading
-    w = max(t.width(line) for line in lines) + 2 * pad
+    rows = [line if isinstance(line, list) else
+            [(line, FG if colors is None else colors[i])]
+            for i, line in enumerate(lines)]
+    w = max(sum(t.width(text) for text, _ in row) for row in rows) + 2 * pad
     h = line_h * len(lines) + 2 * pad
 
     # Each distinct glyph is defined once and placed with <use>; VT323 repeats
     # enough that this is roughly a tenth of the size of one path per glyph.
-    used = sorted({ch for line in lines for ch in line if ch != " " and t.path(ch)})
+    used = sorted({ch for row in rows for text, _ in row for ch in text
+                   if ch != " " and t.path(ch)})
     ids = {ch: "g%d" % i for i, ch in enumerate(used)}
     defs = "".join('<path id="%s" d="%s"/>' % (ids[ch], t.path(ch)) for ch in used)
 
@@ -95,18 +105,18 @@ def svg(lines, name, size=20, leading=1.0, colors=None, font=FONT,
                      'fill="none" stroke="%s"/>'
                      % (round(w) - 1, round(h) - 1, RADIUS, RULE))
 
-    for i, line in enumerate(lines):
-        fill = FG if colors is None else colors[i]
+    for i, row in enumerate(rows):
         # Baseline: the ascender sits just under the top padding.
         baseline = pad + line_h * i + size * 0.78
-        parts.append('<g fill="%s" transform="translate(0 %.2f) scale(%.5f %.5f)">'
-                     % (fill, baseline, t.scale, -t.scale))
         x = pad / t.scale
-        for ch in line:
-            if ch != " " and ch in ids:
-                parts.append('<use xlink:href="#%s" x="%.1f"/>' % (ids[ch], x))
-            x += t.advance(ch) / t.scale
-        parts.append("</g>")
+        for text, fill in row:
+            parts.append('<g fill="%s" transform="translate(0 %.2f) scale(%.5f %.5f)">'
+                         % (fill, baseline, t.scale, -t.scale))
+            for ch in text:
+                if ch != " " and ch in ids:
+                    parts.append('<use xlink:href="#%s" x="%.1f"/>' % (ids[ch], x))
+                x += t.advance(ch) / t.scale
+            parts.append("</g>")
     parts.append("</svg>")
 
     path = os.path.join(OUT, name + ".svg")
@@ -173,10 +183,16 @@ BLOCKS = {
         "EDUCATION      BSc Computer Engineering - Universidad de Sevilla - 2023-2027",
         "               Erasmus - Beijing Institute of Technology - to July 2026",
     ]),
+    # Now is the one block written as a session rather than as prose: three
+    # PowerShell commands, the prompt in grey and the command in white, which
+    # is the same terminal the titles and the loop are already set in.
     "now": (dict(size=26, leading=1.97, pad=30), [
-        "> organising the AI talks at the Universidad de Sevilla",
-        "> research on pushing the TPU state of the art",
-        "> building Perseo, the assistant that listens and watches",
+        [(PROMPT, DIM),
+         ('START-TALKSERIES -TOPIC AI -AT "UNIVERSIDAD DE SEVILLA"', FG)],
+        [(PROMPT, DIM),
+         ("INVOKE-RESEARCH -TARGET TPU -GOAL STATE-OF-THE-ART", FG)],
+        [(PROMPT, DIM),
+         ("BUILD-PERSEO -CAPABILITY LISTEN,WATCH", FG)],
     ]),
     "coords": (dict(size=22, leading=1.25, colors=[DIM, FG]), [
         "N 42 21 36   W 71 05 31   /   MIT, CAMBRIDGE, MASSACHUSETTS",
