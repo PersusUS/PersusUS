@@ -104,7 +104,7 @@
 <a href="https://www.x.com/JPBazarot" title="Twitter"><img src="assets/i-x.svg" width="58" alt="Twitter" /></a>&nbsp;
 <a href="https://www.instagram.com/jpbazarot/" title="Instagram"><img src="assets/i-instagram.svg" width="58" alt="Instagram" /></a>&nbsp;
 
-<img src="assets/s-coords.svg" width="420" alt="N 37 23 21 W 5 59 04, Seville, Spain" />
+<img src="assets/s-coords.svg" width="550" alt="N 42 21 36 W 71 05 31, MIT, Cambridge, Massachusetts. Not there yet. Soon there." />
 
 <img src="assets/p-angel.png" width="100%" alt="" />
 

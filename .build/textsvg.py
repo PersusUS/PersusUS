@@ -170,8 +170,9 @@ BLOCKS = {
         "> waiting on the workshop notification, 29 September",
         "> compressing state space models until they fit where they shouldn't",
     ]),
-    "coords": (dict(size=22, colors=[DIM]), [
-        "N 37 23 21   W 5 59 04   /   SEVILLE, SPAIN",
+    "coords": (dict(size=22, leading=1.25, colors=[DIM, FG]), [
+        "N 42 21 36   W 71 05 31   /   MIT, CAMBRIDGE, MASSACHUSETTS",
+        "> NOT THERE YET. SOON THERE.",
     ]),
 }
 
