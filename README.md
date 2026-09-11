@@ -6,7 +6,8 @@
 
 [![Portfolio](https://img.shields.io/badge/PORTFOLIO-persus.netlify.app-ffffff?style=flat-square&labelColor=000000&color=000000)](https://persus.netlify.app)
 [![Email](https://img.shields.io/badge/EMAIL-jp.bazarot%40gmail.com-ffffff?style=flat-square&labelColor=000000&color=000000)](mailto:jp.bazarot@gmail.com)
-[![LinkedIn](https://img.shields.io/badge/LINKEDIN-jesperezbazarot-ffffff?style=flat-square&labelColor=000000&color=000000)](https://linkedin.com/in/jesperezbazarot)
+[![LinkedIn](https://img.shields.io/badge/LINKEDIN-jpbazarot-ffffff?style=flat-square&labelColor=000000&color=000000)](https://linkedin.com/in/jpbazarot)
+[![X](https://img.shields.io/badge/X-%40JPBazarot-ffffff?style=flat-square&labelColor=000000&color=000000)](https://x.com/JPBazarot)
 [![University](https://img.shields.io/badge/UNIVERSIDAD-DE%20SEVILLA-ffffff?style=flat-square&labelColor=000000&color=000000)](https://www.informatica.us.es/)
 
 </div>
