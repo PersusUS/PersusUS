@@ -25,16 +25,16 @@ OUT = "assets/g-shark.gif"
 FONT = ".build/VT323-Regular.ttf"
 
 GROUND = (13, 17, 23)          # #0d1117 - GitHub dark canvas
-FG = (230, 237, 243)           # GitHub's own body ink
-DIM = (139, 148, 158)
+FG = (139, 148, 158)           # the dim ink is as bright as the loop gets
+DIM = (61, 68, 77)             # and the thin cells barely leave the ground
 
-RAMP = " .:-=+*#"             # thinnest to densest; stopping short of the
+RAMP = " .:-=+"               # thinnest to densest; stopping short of the
                                # solid glyphs keeps the shark from filling in
 COLS = 66                      # characters across; the height follows the clip
 SIZE = 8                       # px of VT323 per character
 FLOOR, CEIL = 95, 240          # source levels the ramp is stretched between
-GAMMA = 1.35                   # >1 holds the water back, keeps the shark solid
-BRIGHT = 0.62                  # above this the cell is set in the body ink
+GAMMA = 1.9                    # >1 holds the water back, keeps the shark solid
+BRIGHT = 0.70                  # above this the cell is set in the body ink
 RADIUS = 16                    # px the corners are rounded by
 
 
