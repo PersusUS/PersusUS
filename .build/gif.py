@@ -11,15 +11,15 @@ The ramp runs against the brightness - the water is the bright half of the
 shot and thins out to bare ground, the shark is the dark half and is what
 gets drawn - and it stops well short of the solid glyphs, in the two dimmest
 inks the page uses. The picture is meant to sit behind the text beside it,
-not next to it. The only thing done to the frame itself is rounding off its
-corners.
+not next to it. What is left of the tube is the edge: the drawing falls away
+at the border and the corners are rounded off.
 
 Run from the repo root: python .build/gif.py
 """
 
 import os
 
-from PIL import Image, ImageDraw, ImageFont, ImageSequence
+from PIL import Image, ImageChops, ImageDraw, ImageFont, ImageSequence
 
 SRC = ".build/src/03-shark.gif"
 OUT = "assets/g-shark.gif"
@@ -36,14 +36,22 @@ FLOOR, CEIL = 95, 240          # source levels the ramp is stretched between
 GAMMA = 1.8                    # >1 holds the water back to bare ground
 BRIGHT = 0.70                  # above this the cell takes the brighter ink
 RADIUS = 16                    # px the corners are rounded by
+EDGE = 0.22                    # share of each axis the border fade spans
 
 
-def rounded(size):
-    """The frame, with its corners taken off."""
-    mask = Image.new("L", size, 0)
-    ImageDraw.Draw(mask).rounded_rectangle(
-        [0, 0, size[0] - 1, size[1] - 1], RADIUS, fill=255)
-    return mask
+def tube(size):
+    """Full strength in the middle, fading at the border, no square corner."""
+    w, h = size
+    mask = Image.new("L", size)
+    px = mask.load()
+    for y in range(h):
+        fy = min(1.0, min(y, h - 1 - y) / (h * EDGE))
+        for x in range(w):
+            fx = min(1.0, min(x, w - 1 - x) / (w * EDGE))
+            px[x, y] = int(255 * (fx * fy) ** 0.7)
+    corners = Image.new("L", size, 0)
+    ImageDraw.Draw(corners).rounded_rectangle([0, 0, w - 1, h - 1], RADIUS, fill=255)
+    return ImageChops.multiply(mask, corners)
 
 
 def main():
@@ -54,7 +62,7 @@ def main():
     w, h = src.size
     rows = round(COLS * (h / w) * (cell_w / cell_h))
     size = (round(cell_w * COLS), round(cell_h * rows))
-    mask = rounded(size)
+    mask = tube(size)
     ground = Image.new("RGB", size, GROUND)
 
     frames = []
