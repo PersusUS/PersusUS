@@ -26,11 +26,12 @@ FONT = ".build/VT323-Regular.ttf"
 MONO = glob.glob(os.path.join(
     os.path.dirname(matplotlib.__file__),
     "mpl-data", "fonts", "ttf", "DejaVuSansMono.ttf"))[0]
-# VT323 carries no CJK, and the Noto Sans SC that Windows ships is 17.8 MB for
+# VT323 carries no CJK, and the Noto Serif SC that Windows ships is 21 MB for
 # the six characters wanted here, so `.build/subset-cjk.py` cuts it down to
-# just those. Noto is under the SIL Open Font License, which travels with it in
-# NotoSansSC-OFL.txt.
-CJK = ".build/NotoSansSC-subset.ttf"
+# just those - a Mincho serif, which is the shape Evangelion's own titles are
+# cut in. Noto is under the SIL Open Font License, which travels with it in
+# NotoSerifSC-OFL.txt.
+CJK = ".build/NotoSerifSC-subset.ttf"
 OUT = "assets"
 
 GROUND = "#0d1117"      # GitHub dark canvas
@@ -157,7 +158,7 @@ def svg(lines, name, size=20, leading=1.0, colors=None, font=FONT,
             x = (w - pad - tn.width(text)) / tn.scale
             parts.append('<g class="nt" fill="%s" transform="translate(0 %.2f) '
                          'scale(%.5f %.5f)">'
-                         % (DIM, baseline, tn.scale, -tn.scale))
+                         % (FG, baseline, tn.scale, -tn.scale))
             for ch in text:
                 if ch in nids:
                     parts.append('<use xlink:href="#%s" x="%.1f"/>' % (nids[ch], x))
@@ -254,11 +255,11 @@ TAGLINE = [
 TAGLINE_MODES = ["type", "type", "wipe", "wipe"]
 
 BLOCKS = {
-    # The Instrumentality Project, in the margin the two short lines leave.
-    # Half a line down puts it across both of them rather than on either.
+    # The Instrumentality Project, in the margin the two short lines leave,
+    # on the first line's own baseline and in the bright ink.
     "tagline": (dict(size=30, leading=1.15, colors=[FG, FG, DIM, DIM],
                      animate=TAGLINE_MODES,
-                     notes=[(0.5, "人類補完計画")]), TAGLINE),
+                     notes=[(0, "人類補完計画")]), TAGLINE),
     # Tags is a second file, so it cannot share a clock with the block above
     # it - it can only be held back by what that block is known to take. A
     # sweep tolerates the few milliseconds the two images load apart; a typed
