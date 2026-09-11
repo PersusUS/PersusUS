@@ -26,12 +26,12 @@ FONT = ".build/VT323-Regular.ttf"
 MONO = glob.glob(os.path.join(
     os.path.dirname(matplotlib.__file__),
     "mpl-data", "fonts", "ttf", "DejaVuSansMono.ttf"))[0]
-# VT323 carries no CJK, and the Noto Serif SC that Windows ships is 21 MB for
+# VT323 carries no CJK, and the Noto Sans SC that Windows ships is 17.8 MB for
 # the six characters wanted here, so `.build/subset-cjk.py` cuts it down to
-# just those - a Mincho serif, which is the shape Evangelion's own titles are
-# cut in. Noto is under the SIL Open Font License, which travels with it in
-# NotoSerifSC-OFL.txt.
-CJK = ".build/NotoSerifSC-subset.ttf"
+# just those. The sans is the nearer of the two Noto cuts to VT323 - even
+# strokes, no modulation. Noto is under the SIL Open Font License, which
+# travels with it in NotoSansSC-OFL.txt.
+CJK = ".build/NotoSansSC-subset.ttf"
 OUT = "assets"
 
 GROUND = "#0d1117"      # GitHub dark canvas
