@@ -47,7 +47,7 @@ happens next.
 | **Perseo** | Tauri v2 + React 19 + Gemini Live: voice, camera, screen, RAG over my own vault | Rust↔Python bridge went from 7.5 s to 0.30 s per call by making it persistent — over pipes, not localhost HTTP, because anything on `127.0.0.1` is reachable by any process |
 | **[ReasoningTraces](https://github.com/PersusUS/ReasoningTraces)** | Annotated agentic reasoning traces | Hand-verified before anyone gets to cite it |
 | **HybridMamba-11** | 11 interleaved Mamba + Transformer layers in a U-Net, 16 MB | Hillis–Steele parallel scan, validated on the hardware I actually had |
-| **MAGI** | Tri-model consensus (MELCHIOR / BALTHASAR / CASPER) that votes | The decision is made by the procedure, not by a model |
+| **[MAGI](https://github.com/PersusUS/MAGI)** | Tri-model consensus (MELCHIOR / BALTHASAR / CASPER) that votes | The decision is made by the procedure, not by a model |
 | **Kotoba** | Japanese SRS: the entire JLPT, 20 785 cards, my own SM-2 | Standard library, SQLite and one page — nothing leaves the device, not even inside the APK |
 | **MagicOCR** | MTG card scanner by 64-bit dHash | No image is ever uploaded: 128 bits cross the network |
 | **Z13-Zodiac** | Can a 13-symbol cipher be solved at all? Bit budget and statistical control | Eight avenues refuted, each with its p-value — the negatives *are* the product |
