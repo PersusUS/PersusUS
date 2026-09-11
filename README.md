@@ -85,7 +85,7 @@
 
 <div align="center">
 
-<img src="assets/s-now.svg" width="790" alt="Fourth year, and the TFG proposal on the Jetson. Waiting on the workshop notification, 29 September. Compressing state space models until they fit where they shouldn't." />
+<img src="assets/s-now.svg" width="640" alt="Organising the AI talks at the Universidad de Sevilla. Research on pushing the TPU state of the art. Building Perseo, the assistant that listens and watches." />
 
 </div>
 
@@ -104,8 +104,8 @@
 <a href="https://www.x.com/JPBazarot" title="Twitter"><img src="assets/i-x.svg" width="58" alt="Twitter" /></a>&nbsp;
 <a href="https://www.instagram.com/jpbazarot/" title="Instagram"><img src="assets/i-instagram.svg" width="58" alt="Instagram" /></a>&nbsp;
 
-<img src="assets/s-coords.svg" width="550" alt="N 42 21 36 W 71 05 31, MIT, Cambridge, Massachusetts. Not there yet. Soon there." />
-
 <img src="assets/p-angel.png" width="100%" alt="" />
+
+<img src="assets/s-coords.svg" width="550" alt="N 42 21 36 W 71 05 31, MIT, Cambridge, Massachusetts. Not there yet. Soon there." />
 
 </div>

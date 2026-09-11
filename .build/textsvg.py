@@ -166,9 +166,9 @@ BLOCKS = {
         "               Erasmus - Beijing Institute of Technology - to July 2026",
     ]),
     "now": (dict(size=22, leading=1.25), [
-        "> fourth year, and the TFG proposal on the Jetson",
-        "> waiting on the workshop notification, 29 September",
-        "> compressing state space models until they fit where they shouldn't",
+        "> organising the AI talks at the Universidad de Sevilla",
+        "> research on pushing the TPU state of the art",
+        "> building Perseo, the assistant that listens and watches",
     ]),
     "coords": (dict(size=22, leading=1.25, colors=[DIM, FG]), [
         "N 42 21 36   W 71 05 31   /   MIT, CAMBRIDGE, MASSACHUSETTS",
