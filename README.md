@@ -97,11 +97,12 @@
 
 <div align="center">
 
-<a href="https://persus.netlify.app"><img src="https://img.shields.io/badge/WEBSITE-0D1117?style=for-the-badge&logo=netlify&logoColor=FFFFFF&labelColor=0D1117" alt="Website" /></a>
-<a href="mailto:jp.bazarot@gmail.com"><img src="https://img.shields.io/badge/EMAIL-0D1117?style=for-the-badge&logo=gmail&logoColor=FFFFFF&labelColor=0D1117" alt="Email" /></a>
-<a href="https://www.linkedin.com/in/jpbazarot/"><img src="https://img.shields.io/badge/LINKEDIN-0D1117?style=for-the-badge&logo=linkedin&logoColor=FFFFFF&labelColor=0D1117" alt="LinkedIn" /></a>
-<a href="https://www.x.com/JPBazarot"><img src="https://img.shields.io/badge/TWITTER-0D1117?style=for-the-badge&logo=x&logoColor=FFFFFF&labelColor=0D1117" alt="Twitter" /></a>
-<a href="https://www.instagram.com/jpbazarot/"><img src="https://img.shields.io/badge/INSTAGRAM-0D1117?style=for-the-badge&logo=instagram&logoColor=FFFFFF&labelColor=0D1117" alt="Instagram" /></a>
+<a href="https://persus.netlify.app" title="Website"><img src="assets/i-web.svg" width="58" alt="Website" /></a>&nbsp;
+<a href="mailto:jp.bazarot@gmail.com" title="Email"><img src="assets/i-mail.svg" width="58" alt="Email" /></a>&nbsp;
+<a href="https://github.com/PersusUS" title="GitHub"><img src="assets/i-github.svg" width="58" alt="GitHub" /></a>&nbsp;
+<a href="https://www.linkedin.com/in/jpbazarot/" title="LinkedIn"><img src="assets/i-linkedin.svg" width="58" alt="LinkedIn" /></a>&nbsp;
+<a href="https://www.x.com/JPBazarot" title="Twitter"><img src="assets/i-x.svg" width="58" alt="Twitter" /></a>&nbsp;
+<a href="https://www.instagram.com/jpbazarot/" title="Instagram"><img src="assets/i-instagram.svg" width="58" alt="Instagram" /></a>&nbsp;
 
 <img src="assets/s-coords.svg" width="420" alt="N 37 23 21 W 5 59 04, Seville, Spain" />
 
