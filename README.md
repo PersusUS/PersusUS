@@ -4,9 +4,13 @@
 
 </div>
 
+<br/>
+
 <div align="center">
 
 <img src="assets/t-persus.svg" width="520" alt="Persus" />
+
+<br/>
 
 </div>
 
@@ -18,9 +22,13 @@
 
 </div>
 
+<br/>
+
 <div align="center">
 
 <img src="assets/t-about.svg" width="470" alt="About" />
+
+<br/>
 
 </div>
 
@@ -30,9 +38,13 @@
 
 </div>
 
+<br/>
+
 <div align="center">
 
 <img src="assets/t-stack.svg" width="455" alt="Stack" />
+
+<br/>
 
 </div>
 
@@ -42,9 +54,13 @@
 
 </div>
 
+<br/>
+
 <div align="center">
 
 <img src="assets/t-work.svg" width="440" alt="Work" />
+
+<br/>
 
 </div>
 
@@ -54,9 +70,13 @@
 
 </div>
 
+<br/>
+
 <div align="center">
 
 <img src="assets/t-projects.svg" width="670" alt="Projects" />
+
+<br/>
 
 </div>
 
@@ -77,22 +97,30 @@
 
 </div>
 
+<br/>
+
 <div align="center">
 
 <img src="assets/t-now.svg" width="360" alt="Now" />
 
+<br/>
+
 </div>
 
 <div align="center">
 
-<img src="assets/g-shark.gif" width="282" align="middle" alt="" />
+<img src="assets/g-shark.gif" width="198" align="middle" alt="" />
 <img src="assets/s-now.svg" width="560" align="middle" alt="Organising the AI talks at the Universidad de Sevilla. Research on pushing the TPU state of the art. Building Perseo, the assistant that listens and watches." />
 
 </div>
 
+<br/>
+
 <div align="center">
 
 <img src="assets/t-contact.svg" width="620" alt="Contact" />
+
+<br/>
 
 </div>
 

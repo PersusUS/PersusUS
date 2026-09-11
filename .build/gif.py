@@ -5,7 +5,9 @@ README as a photo it read as a lit rectangle on a dark page. Typed out
 instead, it belongs to the same terminal as everything around it: each frame
 is sampled down to a character grid and every cell replaced by the ramp glyph
 nearest its darkness, set in VT323 at the size the README shows the loop, so
-the characters stay crisp rather than being scaled by the browser.
+the characters stay crisp rather than being scaled by the browser. The ramp
+stops before the solid glyphs and the corners are rounded off, which keeps the
+loop from reading as a hard block of ink beside the text.
 
 The ramp runs against the brightness. The water is the bright half of the
 shot and thins out to bare ground; the shark is the dark half, and is what
@@ -26,12 +28,14 @@ GROUND = (13, 17, 23)          # #0d1117 - GitHub dark canvas
 FG = (230, 237, 243)           # GitHub's own body ink
 DIM = (139, 148, 158)
 
-RAMP = " .:-=+*#%@"            # thinnest to densest
-COLS = 94                      # characters across; the height follows the clip
+RAMP = " .:-=+*#"             # thinnest to densest; stopping short of the
+                               # solid glyphs keeps the shark from filling in
+COLS = 66                      # characters across; the height follows the clip
 SIZE = 8                       # px of VT323 per character
-FLOOR, CEIL = 95, 235          # source levels the ramp is stretched between
-GAMMA = 1.3                    # >1 holds the water back, keeps the shark solid
-BRIGHT = 0.55                  # above this the cell is set in the body ink
+FLOOR, CEIL = 95, 240          # source levels the ramp is stretched between
+GAMMA = 1.35                   # >1 holds the water back, keeps the shark solid
+BRIGHT = 0.62                  # above this the cell is set in the body ink
+RADIUS = 16                    # px the corners are rounded by
 
 
 def main():
@@ -42,6 +46,11 @@ def main():
     w, h = src.size
     rows = round(COLS * (h / w) * (cell_w / cell_h))
     out_size = (round(cell_w * COLS), round(cell_h * rows))
+
+    corners = Image.new("L", out_size, 0)
+    ImageDraw.Draw(corners).rounded_rectangle(
+        [0, 0, out_size[0] - 1, out_size[1] - 1], RADIUS, fill=255)
+    ground = Image.new("RGB", out_size, GROUND)
 
     frames = []
     for fr in ImageSequence.Iterator(src):
@@ -55,6 +64,7 @@ def main():
                 if glyph != " ":
                     draw.text((x * cell_w, y * cell_h - SIZE * 0.22), glyph,
                               font=font, fill=FG if v > BRIGHT else DIM)
+        im = Image.composite(im, ground, corners)
         frames.append(im.convert("P", palette=Image.ADAPTIVE, colors=8))
 
     frames[0].save(OUT, save_all=True, append_images=frames[1:],
