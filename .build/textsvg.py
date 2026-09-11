@@ -35,6 +35,14 @@ RULE = "#30363d"        # GitHub's own border grey
 RADIUS = 18             # px the bordered blocks are rounded by
 PAD = 16                # px of ground around the text
 
+# The tagline is typed out rather than simply being there. Timings are in
+# seconds, and are spent from a clock that starts when the image loads.
+LEAD = 0.30             # cursor blinks this long before the first character
+CHAR = 0.026            # one typed character
+SWEEP = 0.006           # one character of a line that is swept, not typed
+PAUSE = 0.06            # between one line finishing and the next starting
+BLINK = 1.06            # a full cursor cycle
+
 
 class Typesetter:
     def __init__(self, path, size):
@@ -70,8 +78,14 @@ class Typesetter:
 
 
 def svg(lines, name, size=20, leading=1.0, colors=None, font=FONT,
-        pad=PAD, border=False):
-    """Render lines of text to assets/<name>.svg, reusing each glyph outline."""
+        pad=PAD, border=False, animate=None, delay=0.0):
+    """Render lines of text to assets/<name>.svg, reusing each glyph outline.
+
+    Pass `animate` a mode per line - "type" to have it typed a character at a
+    time behind a cursor, "wipe" to have it swept in - and the block plays
+    itself out on load. `delay` holds the whole sequence back, which is how a
+    block in a second file falls in behind the one above it.
+    """
     t = Typesetter(font, size)
     line_h = size * leading
     w = max(t.width(line) for line in lines) + 2 * pad
@@ -107,6 +121,11 @@ def svg(lines, name, size=20, leading=1.0, colors=None, font=FONT,
                 parts.append('<use xlink:href="#%s" x="%.1f"/>' % (ids[ch], x))
             x += t.advance(ch) / t.scale
         parts.append("</g>")
+
+    if animate:
+        parts.extend(_animation(lines, animate, t, size, line_h, pad,
+                                round(w), round(h), delay))
+
     parts.append("</svg>")
 
     path = os.path.join(OUT, name + ".svg")
@@ -116,14 +135,95 @@ def svg(lines, name, size=20, leading=1.0, colors=None, font=FONT,
                                   os.path.getsize(path) // 1024))
 
 
+def _animation(lines, modes, t, size, line_h, pad, w, h, delay):
+    """Cover every line, then slide the covers off in turn.
+
+    Revealing by sliding an opaque rectangle the colour of the ground, rather
+    than by clipping, buys the widest support there is: the only things put in
+    motion are `transform` and `opacity`. A typed line steps its cover off one
+    character at a time - VT323 is monospaced, so a step is exactly a glyph -
+    with a block cursor riding the edge; a swept line is uncovered in one go.
+    """
+    adv = t.advance("M")
+    css = [".cv{fill:%s}.cu{fill:%s}" % (GROUND, FG),
+           "@keyframes bl{50%{opacity:0}}",
+           "@keyframes on{to{opacity:1}}@keyframes off{to{opacity:0}}"]
+    body = []
+    clock = delay + LEAD
+    last_typed = max((i for i, m in enumerate(modes) if m == "type"
+                      and lines[i]), default=None)
+
+    for i, mode in enumerate(modes):
+        n = len(lines[i])
+        if not n:
+            continue
+        # Bands do not overlap, or a cover still in place would hold down the
+        # line above it; the first and last reach the edge for a little slack.
+        y0 = 0 if i == 0 else pad + line_h * i
+        y1 = h if i == len(lines) - 1 else pad + line_h * (i + 1)
+        run = t.width(lines[i])
+        dur = n * (CHAR if mode == "type" else SWEEP)
+
+        css.append("@keyframes k%d{to{transform:translateX(%.1fpx)}}" % (i, run + 4))
+        css.append(".k%d{animation:k%d %.3fs %s %.3fs forwards}"
+                   % (i, i, dur,
+                      "steps(%d)" % n if mode == "type" else "ease-out",
+                      clock))
+        body.append('<rect class="cv k%d" x="%.1f" y="%.1f" width="%d" height="%.1f"/>'
+                    % (i, pad - 2, y0, w, y1 - y0))
+
+        if mode == "type":
+            # The gate hides the cursor until this line's turn and, unless it
+            # is the last one typed, takes it away again once the line is out.
+            gate = ".g%d{opacity:0;animation:on 0s %.3fs forwards" % (i, clock)
+            if i != last_typed:
+                gate += ",off 0s %.3fs forwards" % (clock + dur)
+            css.append(gate + "}")
+            css.append("@keyframes m%d{to{transform:translateX(%.1fpx)}}"
+                       % (i, n * adv))
+            css.append(".m%d{animation:m%d %.3fs steps(%d) %.3fs forwards,"
+                       "bl %.2fs step-end infinite}"
+                       % (i, i, dur, n, clock, BLINK))
+            baseline = pad + line_h * i + size * 0.78
+            body.append('<g class="g%d"><rect class="cu m%d" x="%.1f" y="%.1f" '
+                        'width="%.1f" height="%.1f"/></g>'
+                        % (i, i, pad, baseline - size * 0.74, adv, size * 0.8))
+
+        clock += dur + PAUSE
+
+    # Anyone who has asked for less movement gets the finished block instead.
+    css.append("@media (prefers-reduced-motion:reduce){"
+               ".cv{transform:translateX(%dpx)}"
+               ".cv,.cu,g[class^=g]{animation:none!important}"
+               "g[class^=g]{opacity:0}}" % (w + 8))
+    return ["<style>%s</style>" % "".join(css)] + body
+
+def _runtime(lines, modes):
+    """How long a block takes to play itself out, in seconds."""
+    return LEAD + sum(len(line) * (CHAR if mode == "type" else SWEEP) + PAUSE
+                      for line, mode in zip(lines, modes) if line)
+
+
+# The two lines that say who he is are typed; the three that qualify it are
+# swept in behind them, which keeps the whole opening under four seconds
+# instead of the seven it would take to type all 283 characters.
+TAGLINE = [
+    "JESUS PEREZ BAZAROT - 21 - SEVILLE",
+    "I WORK ON THE PARTS OF AI THAT BREAK.",
+    "MODELS THAT FORGET. MODELS TOO LARGE. BENCHMARKS THAT LIE.",
+    "IF A RESULT CAN'T BE REPRODUCED BIT FOR BIT, I DON'T TRUST IT YET.",
+]
+TAGLINE_MODES = ["type", "type", "wipe", "wipe"]
+
 BLOCKS = {
-    "tagline": (dict(size=30, leading=1.15, colors=[FG, FG, DIM, DIM]), [
-        "JESUS PEREZ BAZAROT - 21 - SEVILLE",
-        "I WORK ON THE PARTS OF AI THAT BREAK.",
-        "MODELS THAT FORGET. MODELS TOO LARGE. BENCHMARKS THAT LIE.",
-        "IF A RESULT CAN'T BE REPRODUCED BIT FOR BIT, I DON'T TRUST IT YET.",
-    ]),
-    "tags": (dict(size=22, colors=[DIM]), [
+    "tagline": (dict(size=30, leading=1.15, colors=[FG, FG, DIM, DIM],
+                     animate=TAGLINE_MODES), TAGLINE),
+    # Tags is a second file, so it cannot share a clock with the block above
+    # it - it can only be held back by what that block is known to take. A
+    # sweep tolerates the few milliseconds the two images load apart; a typed
+    # line, locked to the character, would not.
+    "tags": (dict(size=22, colors=[DIM], animate=["wipe"],
+                  delay=_runtime(TAGLINE, TAGLINE_MODES) - LEAD), [
         "AI/ML RESEARCH  /  CONTINUAL LEARNING  /  "
         "BENCHMARKS & EVALUATION  /  EDGE & LOCAL-FIRST",
     ]),
