@@ -1,58 +1,67 @@
-"""Tone the Now section's shark loop to the page's ground.
+"""Redraw the Now section's shark loop as ASCII art.
 
-The source clip is an ordinary grey-on-white underwater shot, so dropped into
-the README it reads as a lit rectangle on a dark page. Two things fix that: the
-greys are mapped onto GitHub's dark canvas the way render.py maps the photos,
-and the frame's edges are faded out, so the clip dissolves into the page
-instead of ending at a border.
+The clip is an ordinary grey-on-white underwater shot, so dropped into the
+README as a photo it read as a lit rectangle on a dark page. Typed out
+instead, it belongs to the same terminal as everything around it: each frame
+is sampled down to a character grid and every cell replaced by the ramp glyph
+nearest its darkness, set in VT323 at the size the README shows the loop, so
+the characters stay crisp rather than being scaled by the browser.
+
+The ramp runs against the brightness. The water is the bright half of the
+shot and thins out to bare ground; the shark is the dark half, and is what
+actually gets drawn.
 
 Run from the repo root: python .build/gif.py
 """
 
 import os
 
-from PIL import Image, ImageSequence
+from PIL import Image, ImageDraw, ImageFont, ImageSequence
 
 SRC = ".build/src/03-shark.gif"
 OUT = "assets/g-shark.gif"
+FONT = ".build/VT323-Regular.ttf"
+
 GROUND = (13, 17, 23)          # #0d1117 - GitHub dark canvas
-W, H = 300, 271
-FEATHER = 0.5                  # share of each axis the fade spans
-POWER = 1.6                    # higher holds the middle and drops the edges faster
-COLORS = 96
+FG = (230, 237, 243)           # GitHub's own body ink
+DIM = (139, 148, 158)
 
-
-def fade_mask():
-    """Opaque in the middle, transparent at every edge."""
-    mask = Image.new("L", (W, H))
-    px = mask.load()
-    for y in range(H):
-        fy = min(1.0, min(y, H - 1 - y) / (H * FEATHER))
-        for x in range(W):
-            fx = min(1.0, min(x, W - 1 - x) / (W * FEATHER))
-            px[x, y] = int(255 * (fx * fy) ** POWER)
-    return mask
-
-
-def onto_ground(g):
-    """Map a grey frame so its black becomes the GitHub ground."""
-    return Image.merge("RGB", [
-        g.point(lambda v, c=c: int(c + v * (255 - c) / 255)) for c in GROUND])
+RAMP = " .:-=+*#%@"            # thinnest to densest
+COLS = 94                      # characters across; the height follows the clip
+SIZE = 8                       # px of VT323 per character
+FLOOR, CEIL = 95, 235          # source levels the ramp is stretched between
+GAMMA = 1.3                    # >1 holds the water back, keeps the shark solid
+BRIGHT = 0.55                  # above this the cell is set in the body ink
 
 
 def main():
     src = Image.open(SRC)
-    mask = fade_mask()
-    ground = Image.new("RGB", (W, H), GROUND)
-    frames = [
-        Image.composite(onto_ground(fr.convert("L").resize((W, H), Image.LANCZOS)),
-                        ground, mask).convert("P", palette=Image.ADAPTIVE,
-                                              colors=COLORS)
-        for fr in ImageSequence.Iterator(src)]
+    font = ImageFont.truetype(FONT, SIZE)
+    cell_w = font.getlength("#")
+    cell_h = SIZE * 0.72        # VT323 sits well inside its line box
+    w, h = src.size
+    rows = round(COLS * (h / w) * (cell_w / cell_h))
+    out_size = (round(cell_w * COLS), round(cell_h * rows))
+
+    frames = []
+    for fr in ImageSequence.Iterator(src):
+        px = fr.convert("L").resize((COLS, rows), Image.LANCZOS).load()
+        im = Image.new("RGB", out_size, GROUND)
+        draw = ImageDraw.Draw(im)
+        for y in range(rows):
+            for x in range(COLS):
+                v = min(1.0, max(0.0, (CEIL - px[x, y]) / (CEIL - FLOOR))) ** GAMMA
+                glyph = RAMP[min(len(RAMP) - 1, int(v * len(RAMP)))]
+                if glyph != " ":
+                    draw.text((x * cell_w, y * cell_h - SIZE * 0.22), glyph,
+                              font=font, fill=FG if v > BRIGHT else DIM)
+        frames.append(im.convert("P", palette=Image.ADAPTIVE, colors=8))
+
     frames[0].save(OUT, save_all=True, append_images=frames[1:],
                    duration=src.info.get("duration", 80), loop=0, optimize=True)
-    print("%-24s %dx%d  %d frames  %d KB"
-          % (OUT, W, H, len(frames), os.path.getsize(OUT) // 1024))
+    print("%-24s %dx%d  %d chars across  %d frames  %d KB"
+          % (OUT, out_size[0], out_size[1], COLS, len(frames),
+             os.path.getsize(OUT) // 1024))
 
 
 if __name__ == "__main__":

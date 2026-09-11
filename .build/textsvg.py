@@ -165,7 +165,7 @@ BLOCKS = {
         "EDUCATION      BSc Computer Engineering - Universidad de Sevilla - 2023-2027",
         "               Erasmus - Beijing Institute of Technology - to July 2026",
     ]),
-    "now": (dict(size=22, leading=1.25), [
+    "now": (dict(size=26, leading=1.3), [
         "> organising the AI talks at the Universidad de Sevilla",
         "> research on pushing the TPU state of the art",
         "> building Perseo, the assistant that listens and watches",
