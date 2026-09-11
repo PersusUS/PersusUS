@@ -110,7 +110,7 @@
 <div align="center">
 
 <img src="assets/g-shark.gif" width="198" align="middle" alt="" />
-<img src="assets/s-now.svg" width="560" align="middle" alt="Organising the AI talks at the Universidad de Sevilla. Research on pushing the TPU state of the art. Building Perseo, the assistant that listens and watches." />
+<img src="assets/s-now.svg" width="546" align="middle" alt="Organising the AI talks at the Universidad de Sevilla. Research on pushing the TPU state of the art. Building Perseo, the assistant that listens and watches." />
 
 </div>
 

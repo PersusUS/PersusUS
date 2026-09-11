@@ -31,6 +31,7 @@ OUT = "assets"
 GROUND = "#0d1117"      # GitHub dark canvas
 FG = "#e6edf3"          # GitHub's own body ink
 DIM = "#8b949e"
+RULE = "#30363d"        # GitHub's own border grey
 PAD = 16                # px of ground around the text
 
 
@@ -67,12 +68,13 @@ class Typesetter:
         return sum(self.advance(c) for c in text)
 
 
-def svg(lines, name, size=20, leading=1.0, colors=None, font=FONT):
+def svg(lines, name, size=20, leading=1.0, colors=None, font=FONT,
+        pad=PAD, border=False):
     """Render lines of text to assets/<name>.svg, reusing each glyph outline."""
     t = Typesetter(font, size)
     line_h = size * leading
-    w = max(t.width(line) for line in lines) + 2 * PAD
-    h = line_h * len(lines) + 2 * PAD
+    w = max(t.width(line) for line in lines) + 2 * pad
+    h = line_h * len(lines) + 2 * pad
 
     # Each distinct glyph is defined once and placed with <use>; VT323 repeats
     # enough that this is roughly a tenth of the size of one path per glyph.
@@ -87,13 +89,17 @@ def svg(lines, name, size=20, leading=1.0, colors=None, font=FONT):
              '<rect width="100%%" height="100%%" fill="%s"/>' % GROUND,
              '<defs>%s</defs>' % defs]
 
+    if border:
+        parts.append('<rect x="0.5" y="0.5" width="%.1f" height="%.1f" fill="none" '
+                     'stroke="%s"/>' % (round(w) - 1, round(h) - 1, RULE))
+
     for i, line in enumerate(lines):
         fill = FG if colors is None else colors[i]
         # Baseline: the ascender sits just under the top padding.
-        baseline = PAD + line_h * i + size * 0.78
+        baseline = pad + line_h * i + size * 0.78
         parts.append('<g fill="%s" transform="translate(0 %.2f) scale(%.5f %.5f)">'
                      % (fill, baseline, t.scale, -t.scale))
-        x = PAD / t.scale
+        x = pad / t.scale
         for ch in line:
             if ch != " " and ch in ids:
                 parts.append('<use xlink:href="#%s" x="%.1f"/>' % (ids[ch], x))
@@ -165,7 +171,7 @@ BLOCKS = {
         "EDUCATION      BSc Computer Engineering - Universidad de Sevilla - 2023-2027",
         "               Erasmus - Beijing Institute of Technology - to July 2026",
     ]),
-    "now": (dict(size=26, leading=2.15), [
+    "now": (dict(size=26, leading=1.97, pad=30, border=True), [
         "> organising the AI talks at the Universidad de Sevilla",
         "> research on pushing the TPU state of the art",
         "> building Perseo, the assistant that listens and watches",
