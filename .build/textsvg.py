@@ -12,12 +12,20 @@ identically everywhere, including inside GitHub's image proxy, where an
 Run from the repo root: python .build/textsvg.py
 """
 
+import glob
 import os
 
+import matplotlib
+import pyfiglet
 from fontTools.pens.svgPathPen import SVGPathPen
 from fontTools.ttLib import TTFont
 
 FONT = ".build/VT323-Regular.ttf"
+# The dos_rebel titles are drawn out of block and shade characters, which VT323
+# does not carry; DejaVu Sans Mono does, and ships with matplotlib.
+MONO = glob.glob(os.path.join(
+    os.path.dirname(matplotlib.__file__),
+    "mpl-data", "fonts", "ttf", "DejaVuSansMono.ttf"))[0]
 OUT = "assets"
 
 GROUND = "#0d1117"      # GitHub dark canvas
@@ -59,9 +67,9 @@ class Typesetter:
         return sum(self.advance(c) for c in text)
 
 
-def svg(lines, name, size=20, leading=1.0, colors=None):
-    """Render lines of text to assets/<name>.svg, one <path> per glyph."""
-    t = Typesetter(FONT, size)
+def svg(lines, name, size=20, leading=1.0, colors=None, font=FONT):
+    """Render lines of text to assets/<name>.svg, reusing each glyph outline."""
+    t = Typesetter(font, size)
     line_h = size * leading
     w = max(t.width(line) for line in lines) + 2 * PAD
     h = line_h * len(lines) + 2 * PAD
@@ -209,6 +217,20 @@ PROJECTS = [
 ]
 
 
+TITLES = ["Persus", "About", "Stack", "Work", "Projects", "Now", "Contact"]
+
+
+def title_svg(word, size=16):
+    """One dos_rebel title, its block characters drawn as outlines."""
+    art = [line.rstrip() for line
+           in pyfiglet.figlet_format(word, font="dos_rebel").split("\n")]
+    while art and not art[-1]:
+        art.pop()
+    while art and not art[0]:
+        art.pop(0)
+    svg(art, "t-" + word.lower(), size=size, leading=1.0, font=MONO)
+
+
 def projects_svg():
     """Project names in the bright ink, their descriptions in the dim one."""
     lines, colors = [], []
@@ -224,6 +246,8 @@ def projects_svg():
 
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
+    for word in TITLES:
+        title_svg(word)
     for name, (opts, lines) in BLOCKS.items():
         svg(lines, "s-" + name, **opts)
     projects_svg()
