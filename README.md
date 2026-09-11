@@ -68,10 +68,6 @@
 
 <img src="assets/b-now.png" width="800" alt="Now" />
 
-<br>
-
-<img src="https://github-readme-stats.vercel.app/api?username=PersusUS&show_icons=true&hide_border=true&hide_title=true&bg_color=0D1117&text_color=FFFFFF&icon_color=FFFFFF&ring_color=FFFFFF" height="150" alt="" />
-<img src="https://github-readme-stats.vercel.app/api/top-langs/?username=PersusUS&layout=compact&hide_border=true&hide_title=true&bg_color=0D1117&text_color=FFFFFF&icon_color=FFFFFF" height="150" alt="" />
 
 <br><br>
 

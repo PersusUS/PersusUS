@@ -52,8 +52,6 @@ LAYOUT = [
     ("img", ("assets/t-now.png", 300)),
     ("gap", 12),
     ("img", ("assets/b-now.png", 800)),
-    ("gap", 20),
-    ("stats", None),
     ("gap", 34),
     ("img", ("assets/t-contact.png", 560)),
     ("gap", 12),
