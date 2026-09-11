@@ -7,8 +7,9 @@ is sampled down to a character grid and every cell replaced by the ramp glyph
 nearest its darkness, set in VT323 at the size the README shows the loop, so
 the characters stay crisp rather than being scaled by the browser. The ramp
 stops before the solid glyphs, which keeps the loop from reading as a hard
-block of ink beside the text. A hairline in GitHub's own border grey closes
-the frame, so the grid reads as a picture rather than as spilled characters.
+block of ink beside the text. The frame is closed by a hairline in GitHub's
+own border grey and its corners are rounded off, so the grid reads as a
+picture rather than as spilled characters.
 
 The ramp runs against the brightness. The water is the bright half of the
 shot and thins out to bare ground; the shark is the dark half, and is what
@@ -27,6 +28,7 @@ FONT = ".build/VT323-Regular.ttf"
 
 GROUND = (13, 17, 23)          # #0d1117 - GitHub dark canvas
 RULE = (48, 54, 61)            # #30363d - GitHub's own border grey
+RADIUS = 14                    # px the corners are rounded by
 FG = (230, 237, 243)           # GitHub's own body ink
 DIM = (139, 148, 158)
 
@@ -47,6 +49,10 @@ def main():
     w, h = src.size
     rows = round(COLS * (h / w) * (cell_w / cell_h))
     out_size = (round(cell_w * COLS), round(cell_h * rows))
+    ground = Image.new("RGB", out_size, GROUND)
+    corners = Image.new("L", out_size, 0)
+    ImageDraw.Draw(corners).rounded_rectangle(
+        [0, 0, out_size[0] - 1, out_size[1] - 1], RADIUS, fill=255)
 
     frames = []
     for fr in ImageSequence.Iterator(src):
@@ -60,7 +66,9 @@ def main():
                 if glyph != " ":
                     draw.text((x * cell_w, y * cell_h - SIZE * 0.22), glyph,
                               font=font, fill=FG if v > BRIGHT else DIM)
-        draw.rectangle([0, 0, out_size[0] - 1, out_size[1] - 1], outline=RULE)
+        im = Image.composite(im, ground, corners)
+        ImageDraw.Draw(im).rounded_rectangle(
+            [0, 0, out_size[0] - 1, out_size[1] - 1], RADIUS, outline=RULE)
         frames.append(im.convert("P", palette=Image.ADAPTIVE, colors=8))
 
     frames[0].save(OUT, save_all=True, append_images=frames[1:],

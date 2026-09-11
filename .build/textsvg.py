@@ -32,6 +32,7 @@ GROUND = "#0d1117"      # GitHub dark canvas
 FG = "#e6edf3"          # GitHub's own body ink
 DIM = "#8b949e"
 RULE = "#30363d"        # GitHub's own border grey
+RADIUS = 18             # px the bordered blocks are rounded by
 PAD = 16                # px of ground around the text
 
 
@@ -90,8 +91,9 @@ def svg(lines, name, size=20, leading=1.0, colors=None, font=FONT,
              '<defs>%s</defs>' % defs]
 
     if border:
-        parts.append('<rect x="0.5" y="0.5" width="%.1f" height="%.1f" fill="none" '
-                     'stroke="%s"/>' % (round(w) - 1, round(h) - 1, RULE))
+        parts.append('<rect x="0.5" y="0.5" width="%.1f" height="%.1f" rx="%d" '
+                     'fill="none" stroke="%s"/>'
+                     % (round(w) - 1, round(h) - 1, RADIUS, RULE))
 
     for i, line in enumerate(lines):
         fill = FG if colors is None else colors[i]
