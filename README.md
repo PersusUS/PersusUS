@@ -98,8 +98,7 @@
 
 <div align="center">
 
-<img src="assets/g-shark.gif" width="198" align="middle" alt="" />
-<picture><source media="(max-width: 600px)" srcset="assets/s-now-n.svg"><img src="assets/s-now.svg" align="middle" alt="Organising the AI talks at the Universidad de Sevilla. Research on pushing the TPU state of the art. Building Perseo, the assistant that listens and watches." /></picture>
+<picture><source media="(max-width: 600px)" srcset="assets/s-now-n.svg"><img src="assets/s-now.svg" alt="Organising the AI talks at the Universidad de Sevilla. Research on pushing the TPU state of the art. Building Perseo, the assistant that listens and watches." /></picture>
 
 </div>
 

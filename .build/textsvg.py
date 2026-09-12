@@ -535,9 +535,9 @@ BLOCKS = {
             [("  2023-2027.", DIM)],
         ],
     },
-    # Set in caps like the tagline, and sized so the block comes out 179 high
-    # -- the height of the loop it sits beside -- at its own scale, so the
-    # README shows it 1:1 and the glyphs are never resampled by the browser.
+    # Set in caps like the tagline. The leading is wide because the block used
+    # to be cut to the height of the ASCII loop that stood beside it; nothing
+    # stands there now, so the number is only what it looks like it is.
     "now": {
         "opts": dict(size=26, leading=1.936, pad=14, cursor=2),
         "wide": [

@@ -25,10 +25,19 @@ SRC = ".build/src/03-shark.gif"
 OUT = "assets/g-shark.gif"
 FONT = ".build/VT323-Regular.ttf"
 
-GROUND = (13, 17, 23)          # #0d1117 - GitHub dark canvas
 RADIUS = 14                    # px the corners are rounded by
-FG = (230, 237, 243)           # GitHub's own body ink
-DIM = (139, 148, 158)
+
+# The loop is typed out of characters, so it has a ground and two inks like
+# any other block on the page - and like them it is drawn once per theme,
+# because a GIF cannot take its colour from a stylesheet the way an SVG can.
+THEMES = {
+    "": dict(ground=(13, 17, 23),      # #0d1117 - GitHub's dark canvas
+             fg=(230, 237, 243),       # #e6edf3 - its body ink
+             dim=(139, 148, 158)),     # #8b949e
+    "-l": dict(ground=(255, 255, 255),
+               fg=(31, 35, 40),        # #1f2328 - its ink on the light canvas
+               dim=(89, 99, 110)),     # #59636e
+}
 
 RAMP = " .:-=+*#"             # thinnest to densest; stopping short of the
                                # solid glyphs keeps the shark from filling in
@@ -39,7 +48,8 @@ GAMMA = 1.35                   # >1 holds the water back, keeps the shark solid
 BRIGHT = 0.62                  # above this the cell is set in the body ink
 
 
-def main():
+def render(suffix, ground_rgb, fg, dim):
+    """One copy of the loop, set in the inks of one theme."""
     src = Image.open(SRC)
     font = ImageFont.truetype(FONT, SIZE)
     cell_w = font.getlength("#")
@@ -47,7 +57,7 @@ def main():
     w, h = src.size
     rows = round(COLS * (h / w) * (cell_w / cell_h))
     out_size = (round(cell_w * COLS), round(cell_h * rows))
-    ground = Image.new("RGB", out_size, GROUND)
+    ground = Image.new("RGB", out_size, ground_rgb)
     corners = Image.new("L", out_size, 0)
     ImageDraw.Draw(corners).rounded_rectangle(
         [0, 0, out_size[0] - 1, out_size[1] - 1], RADIUS, fill=255)
@@ -55,7 +65,7 @@ def main():
     frames = []
     for fr in ImageSequence.Iterator(src):
         px = fr.convert("L").resize((COLS, rows), Image.LANCZOS).load()
-        im = Image.new("RGB", out_size, GROUND)
+        im = Image.new("RGB", out_size, ground_rgb)
         draw = ImageDraw.Draw(im)
         for y in range(rows):
             for x in range(COLS):
@@ -63,15 +73,22 @@ def main():
                 glyph = RAMP[min(len(RAMP) - 1, int(v * len(RAMP)))]
                 if glyph != " ":
                     draw.text((x * cell_w, y * cell_h - SIZE * 0.22), glyph,
-                              font=font, fill=FG if v > BRIGHT else DIM)
+                              font=font, fill=fg if v > BRIGHT else dim)
         im = Image.composite(im, ground, corners)
         frames.append(im.convert("P", palette=Image.ADAPTIVE, colors=8))
 
-    frames[0].save(OUT, save_all=True, append_images=frames[1:],
+    stem, ext = os.path.splitext(OUT)
+    path = stem + suffix + ext
+    frames[0].save(path, save_all=True, append_images=frames[1:],
                    duration=src.info.get("duration", 80), loop=0, optimize=True)
     print("%-24s %dx%d  %d chars across  %d frames  %d KB"
-          % (OUT, out_size[0], out_size[1], COLS, len(frames),
-             os.path.getsize(OUT) // 1024))
+          % (path, out_size[0], out_size[1], COLS, len(frames),
+             os.path.getsize(path) // 1024))
+
+
+def main():
+    for suffix, ink in THEMES.items():
+        render(suffix, ink["ground"], ink["fg"], ink["dim"])
 
 
 if __name__ == "__main__":
