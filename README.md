@@ -16,7 +16,7 @@
 
 <div align="center">
 
-<img src="assets/s-tagline.svg" width="536" alt="Jesus Perez Bazarot, 21, Seville. I work on the parts of AI that break. I mean to move the world; AI is the lever. Searching for safe AGI. The Human Instrumentality Project." />
+<img src="assets/s-tagline.svg" width="660" alt="Jesus Perez Bazarot, 21, Seville. I work on the parts of AI that break. I mean to move the world; AI is the lever. Searching for safe AGI." />
 
 <img src="assets/s-tags.svg" width="700" alt="AI/ML research, continual learning, benchmarks, edge" />
 
@@ -66,7 +66,7 @@
 
 <div align="center">
 
-<img src="assets/s-work.svg" width="760" alt="2026 to now: running. 2025 to 2026: independent AI/ML research on world models, continual learning and LLM benchmarking; AI/ML developer at OrgaAI. 2024 to 2025: co-founder and co-CTO of ByTheWay, carpooling. 2023 to 2024: CTO at NetKey, NFC networking hardware. 2023: speaker at Telefonica innovaTE. Education: BSc Computer and Electronics Engineering, Universidad de Sevilla, 2023 to 2027." />
+<img src="assets/s-work.svg" width="760" alt="2026 to now: in progress. 2025 to 2026: independent AI/ML research on world models, continual learning and LLM benchmarking; AI/ML developer at OrgaAI. 2024 to 2025: co-founder and co-CTO of ByTheWay, carpooling. 2023 to 2024: CTO at NetKey, NFC networking hardware. 2023: speaker at Telefonica innovaTE. Education: BSc Computer and Electronics Engineering, Universidad de Sevilla, 2023 to 2027." />
 
 </div>
 

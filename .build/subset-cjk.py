@@ -31,7 +31,7 @@ OUT = ".build/DotGothic16-subset.ttf"
 LICENCE = ".build/DotGothic16-OFL.txt"
 
 # The margin of the tagline: the Instrumentality Project.
-TEXT = "\u4eba\u985e\u88dc\u5b8c\u8a08\u753b"  # the section names
+TEXT = "人類補完計画進行中"  # the section names
 
 
 def source():

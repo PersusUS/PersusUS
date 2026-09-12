@@ -40,6 +40,7 @@ RULE = "#30363d"        # GitHub's own border grey
 RADIUS = 18             # px the bordered blocks are rounded by
 PAD = 16                # px of ground around the text
 NOTE_GAP = 64           # px between a line and the note set out to its right
+CJK_FIT = 0.74          # kanji are cut to this of the size the line was set at
 
 # The tagline is typed out rather than simply being there. Timings are in
 # seconds, and are spent from a clock that starts when the image loads.
@@ -122,8 +123,11 @@ def svg(lines, name, size=20, leading=1.0, colors=None, font=FONT,
     faces = {}
 
     def face(path):
+        # DotGothic16 fills its em where VT323 leaves a third of it empty, so
+        # kanji set in a line of VT323 are cut to the height of the caps beside
+        # them rather than to the size the line was set at.
         if path not in faces:
-            faces[path] = Typesetter(path, size)
+            faces[path] = Typesetter(path, size * (CJK_FIT if path == CJK else 1))
         return faces[path]
 
     t = face(font)
@@ -333,14 +337,12 @@ TAGLINE = [
 TAGLINE_MODES = ["type", "type", "wipe", "wipe"]
 
 BLOCKS = {
-    # The Instrumentality Project, in the margin the short lines leave, against
-    # the line about safe AGI - the two say the same thing in two languages.
-    # It is cut to the height of the caps beside it rather than set at the size
-    # of the line, since DotGothic16 fills an em that VT323 does not.
+    # The Instrumentality Project, in the margin the two short lines leave,
+    # on the first line's own baseline and in the bright ink.
     "tagline": (dict(size=30, leading=1.15, colors=[FG, FG, DIM, DIM],
                      animate=TAGLINE_MODES,
-                     notes=[(3, "人類補完計画")],
-                     note_size=21, note_font=CJK, note_color=DIM), TAGLINE),
+                     notes=[(0, "人類補完計画")],
+                     note_size=26, note_font=CJK), TAGLINE),
     # Tags is a second file, so it cannot share a clock with the block above
     # it - it can only be held back by what that block is known to take. A
     # sweep tolerates the few milliseconds the two images load apart; a typed
@@ -369,7 +371,7 @@ BLOCKS = {
          ("Spanish / English / Chinese / Japanese (work in progress)", DIM)],
     ]),
     "work": (dict(size=21, leading=1.3), [
-        [("2026 - now    ", FG), ("[ RUNNING ]", DIM)],
+        [("2026 - now    ", FG), ("進行中", DIM, CJK)],
         [("2025 - 2026   ", FG),
          ("Independent AI/ML research - world models, continual", DIM)],
         [("              ", FG),
