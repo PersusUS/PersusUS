@@ -26,12 +26,12 @@ FONT = ".build/VT323-Regular.ttf"
 MONO = glob.glob(os.path.join(
     os.path.dirname(matplotlib.__file__),
     "mpl-data", "fonts", "ttf", "DejaVuSansMono.ttf"))[0]
-# VT323 carries no CJK, and the Noto Sans SC that Windows ships is 17.8 MB for
-# the six characters wanted here, so `.build/subset-cjk.py` cuts it down to
-# just those. The sans is the nearer of the two Noto cuts to VT323 - even
-# strokes, no modulation. Noto is under the SIL Open Font License, which
-# travels with it in NotoSansSC-OFL.txt.
-CJK = ".build/NotoSansSC-subset.ttf"
+# VT323 carries no CJK. DotGothic16 does, and is drawn on a dot grid the way a
+# screen font is, so the kanji in the margin read as something the same machine
+# put there. `.build/subset-cjk.py` cuts the 2 MB upstream release down to the
+# six characters wanted here. DotGothic16 is under the SIL Open Font License,
+# which travels with it in DotGothic16-OFL.txt.
+CJK = ".build/DotGothic16-subset.ttf"
 OUT = "assets"
 
 GROUND = "#0d1117"      # GitHub dark canvas
@@ -40,6 +40,7 @@ DIM = "#8b949e"
 RULE = "#30363d"        # GitHub's own border grey
 RADIUS = 18             # px the bordered blocks are rounded by
 PAD = 16                # px of ground around the text
+NOTE_GAP = 48           # px between a line and the note set out to its right
 
 # The tagline is typed out rather than simply being there. Timings are in
 # seconds, and are spent from a clock that starts when the image loads.
@@ -102,6 +103,13 @@ def svg(lines, name, size=20, leading=1.0, colors=None, font=FONT,
     w = max(t.width(line) for line in lines) + 2 * pad
     h = line_h * len(lines) + 2 * pad
 
+    if notes:
+        # The margin has to be there before a note can be set in it: widen the
+        # block until the line a note shares a baseline with clears it by NOTE_GAP.
+        tn0 = Typesetter(CJK, note_size)
+        w = max([w] + [t.width(lines[round(i)]) + NOTE_GAP + tn0.width(text)
+                       + 2 * pad for i, text in notes])
+
     # Each distinct glyph is defined once and placed with <use>; VT323 repeats
     # enough that this is roughly a tenth of the size of one path per glyph.
     used = sorted({ch for line in lines for ch in line if ch != " " and t.path(ch)})
@@ -109,7 +117,7 @@ def svg(lines, name, size=20, leading=1.0, colors=None, font=FONT,
     defs = "".join('<path id="%s" d="%s"/>' % (ids[ch], t.path(ch)) for ch in used)
 
     if notes:
-        tn = Typesetter(CJK, note_size)
+        tn = tn0
         marks = sorted({ch for _, text in notes for ch in text if tn.path(ch)})
         nids = {ch: "j%d" % i for i, ch in enumerate(marks)}
         defs += "".join('<path id="%s" d="%s"/>' % (nids[ch], tn.path(ch))
@@ -243,13 +251,13 @@ def _runtime(lines, modes):
                       for line, mode in zip(lines, modes) if line)
 
 
-# The two lines that say who he is are typed; the three that qualify it are
-# swept in behind them, which keeps the whole opening under four seconds
-# instead of the seven it would take to type all 283 characters.
+# The two lines that say who he is are typed; the two that qualify it are
+# swept in behind them, which keeps the whole opening under three seconds
+# instead of the five it would take to type all 124 characters.
 TAGLINE = [
     "JESUS PEREZ BAZAROT - 21 - SEVILLE",
-    "I WORK ON THE PARTS OF AI THAT BREAK.",
-    "MODELS THAT FORGET. MODELS TOO LARGE. BENCHMARKS THAT LIE.",
+    "I WANT TO CHANGE THE WORLD MY OWN WAY.",
+    "STEP BY STEP, BY MAKING AI BETTER.",
     "SEARCHING FOR SAFE AGI.",
 ]
 TAGLINE_MODES = ["type", "type", "wipe", "wipe"]
@@ -259,7 +267,7 @@ BLOCKS = {
     # on the first line's own baseline and in the bright ink.
     "tagline": (dict(size=30, leading=1.15, colors=[FG, FG, DIM, DIM],
                      animate=TAGLINE_MODES,
-                     notes=[(0, "人類補完計画")]), TAGLINE),
+                     notes=[(0, "人類補完計画")], note_size=26), TAGLINE),
     # Tags is a second file, so it cannot share a clock with the block above
     # it - it can only be held back by what that block is known to take. A
     # sweep tolerates the few milliseconds the two images load apart; a typed

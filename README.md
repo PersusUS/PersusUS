@@ -16,7 +16,7 @@
 
 <div align="center">
 
-<img src="assets/s-tagline.svg" width="728" alt="Jesus Perez Bazarot, 21, Seville. I work on the parts of AI that break. Models that forget, models too large, benchmarks that lie. Searching for safe AGI." />
+<img src="assets/s-tagline.svg" width="644" alt="Jesus Perez Bazarot, 21, Seville. I want to change the world my own way, step by step, by making AI better. Searching for safe AGI." />
 
 <img src="assets/s-tags.svg" width="810" alt="AI/ML research, continual learning, benchmarks and evaluation, edge and local-first" />
 

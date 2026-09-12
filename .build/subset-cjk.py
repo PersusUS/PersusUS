@@ -1,43 +1,56 @@
-"""Cut Noto Sans SC down to the handful of characters the margin uses.
+"""Cut DotGothic16 down to the handful of characters the margin uses.
 
-VT323 has no CJK, and the Noto Sans SC that ships with Windows is 17.8 MB -
-more than the rest of this repository put together, for six characters.
-Of the two Noto cuts Windows carries, the sans is the one that sits with
-VT323: even strokes, no modulation, nothing a terminal face would not do.
-Pinned to its regular weight and subset to just those
-characters brings it under 5 KB, small enough to live beside VT323 in here so
-the build does not depend on what a given machine happens to have installed.
+VT323 has no CJK. DotGothic16 is the nearest thing to it that does: a dot
+matrix face, drawn on a grid the way a screen font is, so the kanji in the
+margin read as something a terminal put there rather than as type set beside
+one. Noto Sans SC, which stood here before, is a clean humanist sans - correct,
+but it never looks like a machine drew it.
 
-Noto is under the SIL Open Font License; NotoSansSC-OFL.txt carries the notice
-and the licence, which is what the OFL asks of anything derived from it.
+The upstream release is 2 MB for six characters, so it is fetched once into a
+cache outside the repository and subset down to just those, which brings it
+under 5 KB - small enough to live beside VT323 in here, so the build does not
+depend on what a given machine happens to have installed.
+
+DotGothic16 is under the SIL Open Font License; DotGothic16-OFL.txt carries the
+notice and the licence, which is what the OFL asks of anything derived from it.
 
 Run from the repo root: python .build/subset-cjk.py
 """
 
 import io
 import os
+import urllib.request
 
 from fontTools import subset
 from fontTools.ttLib import TTFont
-from fontTools.varLib import instancer
 
-SRC = os.path.join(os.environ.get("WINDIR", r"C:\Windows"),
-                   "Fonts", "NotoSansSC-VF.ttf")
-OUT = ".build/NotoSansSC-subset.ttf"
-LICENCE = ".build/NotoSansSC-OFL.txt"
+URL = ("https://raw.githubusercontent.com/google/fonts/main/ofl/"
+       "dotgothic16/DotGothic16-Regular.ttf")
+CACHE = os.path.join(".build", "cache", "DotGothic16-Regular.ttf")
+OUT = ".build/DotGothic16-subset.ttf"
+LICENCE = ".build/DotGothic16-OFL.txt"
 
 # The margin of the tagline: the Instrumentality Project.
-TEXT = "人類補完計画"
+TEXT = "\u4eba\u985e\u88dc\u5b8c\u8a08\u753b"
+
+
+def source():
+    """The upstream regular, downloaded on first run and kept out of git."""
+    if not os.path.exists(CACHE):
+        os.makedirs(os.path.dirname(CACHE), exist_ok=True)
+        urllib.request.urlretrieve(URL, CACHE)
+        print("%-28s %d KB fetched" % (CACHE, os.path.getsize(CACHE) // 1024))
+    return CACHE
 
 
 def main():
-    src = TTFont(SRC)
+    src_path = source()
+    src = TTFont(src_path)
     missing = [c for c in TEXT if ord(c) not in src.getBestCmap()]
     if missing:
         raise SystemExit("not in the font: " + " ".join(missing))
 
-    font = instancer.instantiateVariableFont(TTFont(SRC), {"wght": 400},
-                                             inplace=True)
+    font = TTFont(src_path)
     opts = subset.Options()
     opts.name_IDs = ["*"]
     opts.name_legacy = True
