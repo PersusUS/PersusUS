@@ -10,8 +10,6 @@
 
 <img src="assets/t-persus.svg" alt="Persus" />
 
-<br/>
-
 </div>
 
 <div align="center">
@@ -28,8 +26,6 @@
 
 <img src="assets/t-about.svg" alt="About" />
 
-<br/>
-
 </div>
 
 <div align="center">
@@ -43,8 +39,6 @@
 <div align="center">
 
 <img src="assets/t-stack.svg" alt="Stack" />
-
-<br/>
 
 </div>
 
@@ -60,8 +54,6 @@
 
 <img src="assets/t-work.svg" alt="Work" />
 
-<br/>
-
 </div>
 
 <div align="center">
@@ -76,19 +68,11 @@
 
 <img src="assets/t-projects.svg" alt="Projects" />
 
-<br/>
-
 </div>
 
 <div align="center">
 
-<a href="https://github.com/PersusUS/WorldModelsBenchmark"><picture><source media="(max-width: 600px)" srcset="assets/s-p-wmf-n.svg"><img src="assets/s-p-wmf.svg" alt="WMF Benchmark: what a world model forgets when it learns a second task" /></picture></a>
-
-<a href="https://persus.netlify.app/projects/perseo"><picture><source media="(max-width: 600px)" srcset="assets/s-p-perseo-n.svg"><img src="assets/s-p-perseo.svg" alt="Perseo: a desktop assistant that listens and watches" /></picture></a>
-
-<a href="https://persus.netlify.app/projects/hybridmamba"><picture><source media="(max-width: 600px)" srcset="assets/s-p-hybridmamba-n.svg"><img src="assets/s-p-hybridmamba.svg" alt="HybridMamba-11: 31.8M parameters in 13.6 MB, in OpenAI's Parameter Golf" /></picture></a>
-
-<a href="https://persus.netlify.app/projects/multilingual"><picture><source media="(max-width: 600px)" srcset="assets/s-p-multilingual-n.svg"><img src="assets/s-p-multilingual.svg" alt="Multilingual: Chinese against Western frontier models, nine languages" /></picture></a>
+<a href="https://github.com/PersusUS/WorldModelsBenchmark"><picture><source media="(max-width: 600px)" srcset="assets/s-p-wmf-n.svg"><img src="assets/s-p-wmf.svg" alt="WMF Benchmark: what a world model forgets when it learns a second task" /></picture></a><a href="https://persus.netlify.app/projects/perseo"><picture><source media="(max-width: 600px)" srcset="assets/s-p-perseo-n.svg"><img src="assets/s-p-perseo.svg" alt="Perseo: a desktop assistant that listens and watches" /></picture></a><a href="https://persus.netlify.app/projects/hybridmamba"><picture><source media="(max-width: 600px)" srcset="assets/s-p-hybridmamba-n.svg"><img src="assets/s-p-hybridmamba.svg" alt="HybridMamba-11: 31.8M parameters in 13.6 MB, in OpenAI's Parameter Golf" /></picture></a><a href="https://persus.netlify.app/projects/multilingual"><picture><source media="(max-width: 600px)" srcset="assets/s-p-multilingual-n.svg"><img src="assets/s-p-multilingual.svg" alt="Multilingual: Chinese against Western frontier models, nine languages" /></picture></a><a href="https://persus.netlify.app/projects/nightshift"><picture><source media="(max-width: 600px)" srcset="assets/s-p-nightshift-n.svg"><img src="assets/s-p-nightshift.svg" alt="NightShift: an autonomous queue that claims one task a night" /></picture></a><a href="https://persus.netlify.app/projects/magi"><picture><source media="(max-width: 600px)" srcset="assets/s-p-magi-n.svg"><img src="assets/s-p-magi.svg" alt="MAGI: three personas answer, and any one veto sinks the verdict" /></picture></a><a href="https://persus.netlify.app/projects/agentic-traces"><picture><source media="(max-width: 600px)" srcset="assets/s-p-traces-n.svg"><img src="assets/s-p-traces.svg" alt="Traces: 15 annotated agent traces, a nine-type error taxonomy" /></picture></a><a href="https://persus.netlify.app/projects/kotoba"><picture><source media="(max-width: 600px)" srcset="assets/s-p-kotoba-n.svg"><img src="assets/s-p-kotoba.svg" alt="Kotoba: the whole JLPT, N5 to N1, spaced and offline, in Spanish" /></picture></a>
 
 <br/>
 
@@ -110,8 +94,6 @@
 
 <img src="assets/t-now.svg" alt="Now" />
 
-<br/>
-
 </div>
 
 <div align="center">
@@ -126,8 +108,6 @@
 <div align="center">
 
 <img src="assets/t-contact.svg" alt="Contact" />
-
-<br/>
 
 </div>
 

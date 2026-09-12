@@ -30,8 +30,13 @@ CACHE = os.path.join(".build", "cache", "DotGothic16-Regular.ttf")
 OUT = ".build/DotGothic16-subset.ttf"
 LICENCE = ".build/DotGothic16-OFL.txt"
 
-# The margin of the tagline: the Instrumentality Project.
-TEXT = "人類補完計画進行中"  # the section names
+# Every character the page sets in DotGothic16: the margin of the tagline
+# (the Instrumentality Project), the first line of work, and what Perseo is.
+TEXT = (
+    "人類補完計画"          # the Instrumentality Project
+    "進行中"                # in progress
+    "聞き、見るデスクトップアシスタント"  # listens, watches - a desktop assistant
+)
 
 
 def source():

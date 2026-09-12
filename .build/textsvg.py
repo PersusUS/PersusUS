@@ -68,6 +68,7 @@ THEME = (
 
 RADIUS = 18             # px the bordered blocks are rounded by
 PAD = 16                # px of ground around the text
+PAD_TIGHT = 3           # px above and below a line meant to stack
 NOTE_GAP = 64           # px between a line and the note set out to its right
 CJK_FIT = 0.74          # kanji are cut to this of the size the line was set at
 
@@ -96,7 +97,9 @@ class Typesetter:
 
     def advance(self, ch):
         name = self.glyph_name(ch) or self.cmap.get(ord("?"))
-        return self.hmtx[name][0] * self.scale
+        # A subset face carries neither a space nor a question mark to stand
+        # in for what it is missing; a character it cannot set takes no width.
+        return self.hmtx[name][0] * self.scale if name else 0.0
 
     def path(self, ch):
         """Outline of one glyph, in font units."""
@@ -128,7 +131,7 @@ def _runs(line, fill, font):
 def svg(lines, name, size=20, leading=1.0, colors=None, font=FONT,
         pad=PAD, border=False, animate=None, delay=0.0,
         notes=None, note_size=24, note_color=None, note_font=None,
-        cursor=None, note_gap=NOTE_GAP, min_width=0):
+        cursor=None, note_gap=NOTE_GAP, min_width=0, pad_y=None):
     """Render lines of text to assets/<name>.svg, reusing each glyph outline.
 
     A line is either a string, which takes its colour from `colors`, or a list
@@ -150,11 +153,15 @@ def svg(lines, name, size=20, leading=1.0, colors=None, font=FONT,
     them. They fade up once the block has finished playing. `note_gap` closes
     that margin up, which is how the narrow variant keeps a note inside it.
 
+    `pad_y` sets the ground above and below apart from the ground at the sides,
+    which is how eight files stack into one list instead of eight paragraphs.
+
     `min_width` holds the block open to a width it would not have reached on
     its own. Four files that must read as one list have to come out the same
     width, or the browser scales each of them by a different amount and the
     column they share stops being a column.
     """
+    pad_y = pad if pad_y is None else pad_y
     faces = {}
 
     def face(path):
@@ -172,7 +179,7 @@ def svg(lines, name, size=20, leading=1.0, colors=None, font=FONT,
     line_h = size * leading
     w = max(sum(face(f).width(text) for text, _, f in runs)
             for runs in drawn) + 2 * pad
-    h = line_h * len(lines) + 2 * pad
+    h = line_h * len(lines) + 2 * pad_y
 
     if cursor is not None:
         # Leave the cursor somewhere to sit, or it lands on the right edge.
@@ -237,7 +244,7 @@ def svg(lines, name, size=20, leading=1.0, colors=None, font=FONT,
 
     for i, runs in enumerate(drawn):
         # Baseline: the ascender sits just under the top padding.
-        baseline = pad + line_h * i + size * 0.78
+        baseline = pad_y + line_h * i + size * 0.78
         x = pad
         for text, fill, f in runs:
             tf = face(f)
@@ -252,13 +259,13 @@ def svg(lines, name, size=20, leading=1.0, colors=None, font=FONT,
             parts.append("</g>")
 
     if animate:
-        parts.extend(_animation(flat, animate, t, size, line_h, pad,
+        parts.extend(_animation(flat, animate, t, size, line_h, pad, pad_y,
                                 round(w), round(h), delay))
 
     if cursor is not None:
         # A block left waiting at the end of a line, blinking on the same
         # cycle as the one that types the tagline out.
-        baseline = pad + line_h * cursor + size * 0.78
+        baseline = pad_y + line_h * cursor + size * 0.78
         parts.append('<style>@keyframes bk{50%%{opacity:0}}'
                      '.cr{animation:bk %.2fs step-end infinite}'
                      '@media (prefers-reduced-motion:reduce){.cr{animation:none}}'
@@ -279,7 +286,7 @@ def svg(lines, name, size=20, leading=1.0, colors=None, font=FONT,
                          % (delay + _runtime(flat, animate)))
         for i, text, opt in notes:
             tn = note_face(opt)
-            baseline = pad + line_h * i + size * 0.78
+            baseline = pad_y + line_h * i + size * 0.78
             x = w - pad - tn.width(text)
             parts.append('<g class="nt %s" transform="translate(0 %.2f) '
                          'scale(%.5f %.5f)">'
@@ -302,7 +309,7 @@ def svg(lines, name, size=20, leading=1.0, colors=None, font=FONT,
     return round(w), round(h)
 
 
-def _animation(lines, modes, t, size, line_h, pad, w, h, delay):
+def _animation(lines, modes, t, size, line_h, pad, pad_y, w, h, delay):
     """Cover every line, then slide the covers off in turn.
 
     Revealing by sliding an opaque rectangle the colour of the ground, rather
@@ -329,8 +336,8 @@ def _animation(lines, modes, t, size, line_h, pad, w, h, delay):
             continue
         # Bands do not overlap, or a cover still in place would hold down the
         # line above it; the first and last reach the edge for a little slack.
-        y0 = 0 if i == 0 else pad + line_h * i
-        y1 = h if i == len(lines) - 1 else pad + line_h * (i + 1)
+        y0 = 0 if i == 0 else pad_y + line_h * i
+        y1 = h if i == len(lines) - 1 else pad_y + line_h * (i + 1)
         run = t.width(lines[i])
         dur = n * (CHAR if mode == "type" else SWEEP)
 
@@ -354,7 +361,7 @@ def _animation(lines, modes, t, size, line_h, pad, w, h, delay):
             css.append(".m%d{animation:m%d %.3fs steps(%d) %.3fs forwards,"
                        "bl %.2fs step-end infinite}"
                        % (i, i, dur, n, clock, BLINK))
-            baseline = pad + line_h * i + size * 0.78
+            baseline = pad_y + line_h * i + size * 0.78
             body.append('<g class="g%d"><rect class="cu m%d" x="%.1f" y="%.1f" '
                         'width="%.1f" height="%.1f"/></g>'
                         % (i, i, pad, baseline - size * 0.74, adv, size * 0.8))
@@ -369,7 +376,14 @@ def _animation(lines, modes, t, size, line_h, pad, w, h, delay):
     return ["<style>%s</style>" % "".join(css)] + body
 
 def fold(text, cols):
-    """`text` broken on spaces so no line runs past `cols` characters."""
+    """`text` broken on spaces so no line runs past `cols` characters.
+
+    Japanese is written without them, and a full-width character takes about
+    two columns, so text with nothing to break on is cut to length instead.
+    """
+    if " " not in text:
+        half = max(1, cols // 2)
+        return [text[i:i + half] for i in range(0, len(text), half)] or [""]
     out, line = [], ""
     for word in text.split(" "):
         if line and len(line) + 1 + len(word) > cols:
@@ -558,26 +572,55 @@ BLOCKS = {
     },
 }
 
-# Four, not eleven. The rest are on the site, behind the last chip. Each one is
-# its own file so the README can wrap it in its own <a>: a name that describes
-# a project and does not go anywhere is a name a reader cannot use.
+# Eight, not eleven and not four. Each one is its own file so the README can
+# wrap it in its own <a>: a name that describes a project and does not go
+# anywhere is a name a reader cannot use. A fifth element changes the typeface
+# the description is set in.
+#
+# Jetson + Gemma 3 belongs on this list on merit, but the site has no page for
+# it yet and a name that leads to a 404 is worse than one that is not shown.
+# Give it /projects/jetson and it goes back in as a ninth line.
 PROJECTS = [
     ("wmf", "WMF BENCHMARK",
      "what a world model forgets when it learns a second task",
      "https://github.com/PersusUS/WorldModelsBenchmark"),
+    # Perseo answers in the language it was taught to listen in.
     ("perseo", "PERSEO",
-     "a desktop assistant that listens and watches",
-     "https://persus.netlify.app/projects/perseo"),
+     "聞き、見るデスクトップアシスタント",
+     "https://persus.netlify.app/projects/perseo", CJK),
     ("hybridmamba", "HYBRIDMAMBA-11",
      "31.8M parameters in 13.6 MB, in OpenAI's Parameter Golf",
      "https://persus.netlify.app/projects/hybridmamba"),
-    # Jetson + Gemma 3 belongs here on merit, but the site has no page for it
-    # yet and a name that leads to a 404 is worse than one that is not shown.
-    # Give it /projects/jetson and it goes back in as a fourth line.
     ("multilingual", "MULTILINGUAL",
      "Chinese against Western frontier models, nine languages",
      "https://persus.netlify.app/projects/multilingual"),
+    ("nightshift", "NIGHTSHIFT",
+     "an autonomous queue that claims one task a night",
+     "https://persus.netlify.app/projects/nightshift"),
+    ("magi", "MAGI",
+     "three personas answer; any one veto sinks the verdict",
+     "https://persus.netlify.app/projects/magi"),
+    ("traces", "TRACES",
+     "15 annotated agent traces, a nine-type error taxonomy",
+     "https://persus.netlify.app/projects/agentic-traces"),
+    ("kotoba", "KOTOBA",
+     "the whole JLPT, N5 to N1, spaced and offline, in Spanish",
+     "https://persus.netlify.app/projects/kotoba"),
 ]
+
+# What a screen reader and a search engine are given instead of the picture.
+# Written out rather than derived: the names are not words a title-caser knows,
+# and one of the lines is not in English at all.
+ALT = {
+    "wmf": "WMF Benchmark: what a world model forgets when it learns a second task",
+    "perseo": "Perseo: a desktop assistant that listens and watches",
+    "hybridmamba": "HybridMamba-11: 31.8M parameters in 13.6 MB, in OpenAI's Parameter Golf",
+    "multilingual": "Multilingual: Chinese against Western frontier models, nine languages",
+    "nightshift": "NightShift: an autonomous queue that claims one task a night",
+    "magi": "MAGI: three personas answer, and any one veto sinks the verdict",
+    "traces": "Traces: 15 annotated agent traces, a nine-type error taxonomy",
+    "kotoba": "Kotoba: the whole JLPT, N5 to N1, spaced and offline, in Spanish",
+}
 
 ALL_PROJECTS = "https://persus.netlify.app/portfolio"
 
@@ -603,41 +646,51 @@ def title_svg(word, size=13.7):
 def projects_svg():
     """One file a project: the name in the bright ink, what it is in the dim.
 
-    The name is padded to a column shared by all four files, so four separate
-    images still read as one list.
+    The name is padded to a column shared by every file, and PAD_TIGHT takes
+    the ground above and below down to a few pixels, so eight images stacked in
+    one paragraph read as one list rather than as eight of them.
     """
-    col = max(len(name) for _, name, _, _ in PROJECTS) + 2
-    wide = [[[(name.ljust(col), FG), (desc, DIM)]] for _, name, desc, _ in PROJECTS]
-    # A description that stays on one line makes the phone variant 511 wide,
-    # which the browser then has to shrink to a third of a size. Folded, it
-    # fits the column a phone actually has.
-    narrow = [[[(name, FG)]] + [[("  " + part, DIM)] for part in fold(desc, 34)]
-              for _, name, desc, _ in PROJECTS]
+    col = max(len(name) for _, name, _, _, *_ in PROJECTS) + 2
+    wide, narrow = [], []
+    for _, name, desc, _, *rest in PROJECTS:
+        face = rest[0] if rest else FONT
+        wide.append([[(name.ljust(col), FG), (desc, DIM, face)]])
+        # A description that stays on one line makes the phone variant half
+        # again too wide, so there it is folded into the column a phone has.
+        narrow.append([[(name, FG)]]
+                      + [[("  ", DIM), (part, DIM, face)]
+                         for part in fold(desc, 34)])
 
-    # Drawn once to find out how wide the widest of them wants to be, then
-    # again with all four held open to it.
-    for lines, suffix, leading, size in ((wide, "", 1.45, 26.7),
-                                        (narrow, "-n", 1.35, 21)):
-        widest = max(svg(block, "s-p-" + slug + suffix, size=size, leading=leading)[0]
-                     for (slug, _, _, _), block in zip(PROJECTS, lines))
-        for (slug, _, _, _), block in zip(PROJECTS, lines):
-            svg(block, "s-p-" + slug + suffix, size=size, leading=leading,
-                min_width=widest)
-    # The one chip that is left, bordered the way the contact tiles are.
+    for lines, suffix, leading, size in ((wide, "", 1.22, 26.7),
+                                         (narrow, "-n", 1.3, 21)):
+        # Drawn once to find out how wide the widest of them wants to be, then
+        # again with all of them held open to it.
+        widest = max(svg(block, "s-p-" + entry[0] + suffix, size=size,
+                         leading=leading, pad_y=PAD_TIGHT)[0]
+                     for entry, block in zip(PROJECTS, lines))
+        for entry, block in zip(PROJECTS, lines):
+            svg(block, "s-p-" + entry[0] + suffix, size=size, leading=leading,
+                pad_y=PAD_TIGHT, min_width=widest)
+
     # An arrow VT323 does not carry would come out as a hole with its width
     # still spent, so the chip points the way a terminal does.
     svg(["ALL PROJECTS  ->"], "s-p-all", size=26.7, border=True, pad=14)
 
 
 def readme_snippet():
-    """Print the markup the project lines want, so it is pasted, not typed."""
-    print("\n--- projects, for README.md ---")
-    for slug, name, _, url in PROJECTS:
-        print('<a href="%s"><picture>' % url)
-        print('  <source media="(max-width: 600px)" srcset="assets/s-p-%s-n.svg">'
-              % slug)
-        print('  <img src="assets/s-p-%s.svg" alt="%s" /></picture></a>'
-              % (slug, name))
+    """Print the markup the project lines want, so it is pasted, not typed.
+
+    All of them on one source line: GitHub turns a newline inside a paragraph
+    into a line break, and eight line breaks put the list back where it was.
+    """
+    print()
+    print("--- projects, for README.md (one line, no spaces between) ---")
+    print("".join(
+        '<a href="%s"><picture>'
+        '<source media="(max-width: 600px)" srcset="assets/s-p-%s-n.svg">'
+        '<img src="assets/s-p-%s.svg" alt="%s" /></picture></a>'
+        % (url, slug, slug, ALT[slug])
+        for slug, _, _, url, *_ in PROJECTS))
     print('<a href="%s"><img src="assets/s-p-all.svg" alt="All projects" /></a>'
           % ALL_PROJECTS)
 
