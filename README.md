@@ -34,7 +34,7 @@
 
 <div align="center">
 
-<img src="assets/s-about.svg" width="860" alt="Fourth-year Computer Engineering at the Universidad de Sevilla, back from a year at the Beijing Institute of Technology. I learn by building, breaking and rebuilding. Long term: a master's in AI, pointed at something worth conserving." />
+<img src="assets/s-about.svg" width="850" alt="Fourth-year Computer and Electronics Engineering at the Universidad de Sevilla, back from a year of Data Science and AI at the Beijing Institute of Technology. I learn by building, breaking and rebuilding. Long term: a master's in AI at MIT, pointed at something worth conserving." />
 
 </div>
 
@@ -50,7 +50,7 @@
 
 <div align="center">
 
-<img src="assets/s-stack.svg" width="860" alt="Languages: Python, TypeScript, Rust, C++, SQL. Deep learning: PyTorch, CUDA, Triton, quantisation. AI/ML: transformers, state space models, RAG, benchmarking, agents. Backend and data: FastAPI, React, PostgreSQL, pgvector, Docker, Neo4j. Spoken: Spanish, English, Chinese." />
+<img src="assets/s-stack.svg" width="860" alt="Languages: Python, C, C++, Assembly. Deep learning: PyTorch, CUDA, Triton, quantisation. AI/ML: transformers, state space models, RAG, benchmarking, agents. Backend and data: FastAPI, React, PostgreSQL, pgvector, Docker, Neo4j. Spoken: Spanish, English, Chinese." />
 
 </div>
 
@@ -66,7 +66,7 @@
 
 <div align="center">
 
-<img src="assets/s-work.svg" width="800" alt="2025 to now: independent AI/ML research on world models, continual learning and LLM benchmarking; AI/ML developer at OrgaAI. 2024 to 2025: co-founder and co-CTO of ByTheWay, closed. 2023 to 2024: CTO at NetKey, NFC hardware, closed. 2023: speaker at Telefonica innovaTE. Education: BSc Computer Engineering, Universidad de Sevilla, 2023 to 2027, Erasmus at the Beijing Institute of Technology." />
+<img src="assets/s-work.svg" width="760" alt="2025 to now: independent AI/ML research on world models, continual learning and LLM benchmarking; AI/ML developer at OrgaAI. 2024 to 2025: co-founder and co-CTO of ByTheWay, closed. 2023 to 2024: CTO at NetKey, NFC hardware, closed. 2023: speaker at Telefonica innovaTE. Education: BSc Computer and Electronics Engineering, Universidad de Sevilla, 2023 to 2027; Data Science and AI at the Beijing Institute of Technology." />
 
 </div>
 

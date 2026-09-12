@@ -289,15 +289,16 @@ BLOCKS = {
         "AI/ML RESEARCH  /  CONTINUAL LEARNING  /  BENCHMARKS  /  EDGE",
     ]),
     "about": (dict(size=22, leading=1.25), [
-        "Fourth-year Computer Engineering at the UNIVERSIDAD DE SEVILLA, back from",
-        "a year at the BEIJING INSTITUTE OF TECHNOLOGY.",
+        "Fourth-year Computer & Electronics Engineering at the UNIVERSIDAD DE",
+        "SEVILLA, back from a year of Data Science & AI at the BEIJING INSTITUTE",
+        "OF TECHNOLOGY.",
         "",
-        "I learn by building, breaking and rebuilding. Long term: a master's in AI,",
-        "pointed at something worth conserving.",
+        "I learn by building, breaking and rebuilding. Long term: a master's in AI",
+        "at MIT, pointed at something worth conserving.",
     ]),
     # Label in the bright ink, what it holds in the dim one, on one baseline.
     "stack": (dict(size=21, leading=1.3), [
-        [("LANGUAGES        ", FG), ("Python / TypeScript / Rust / C++ / SQL", DIM)],
+        [("LANGUAGES        ", FG), ("Python / C / C++ / Assembly", DIM)],
         [("DEEP LEARNING    ", FG), ("PyTorch / CUDA / Triton / quantisation", DIM)],
         [("AI / ML          ", FG),
          ("Transformers / state space models / RAG / benchmarking / agents", DIM)],
@@ -314,9 +315,11 @@ BLOCKS = {
         [("2023 - 2024   ", FG), ("CTO - NetKey, NFC hardware. Closed.", DIM)],
         [("2023          ", FG), ("Speaker - Telefonica innovaTE.", DIM)],
         [("EDUCATION     ", FG),
-         ("BSc Computer Engineering, Universidad de Sevilla,", DIM)],
+         ("BSc Computer & Electronics Engineering, Universidad de", DIM)],
         [("              ", FG),
-         ("2023-2027. Erasmus at the Beijing Institute of Technology.", DIM)],
+         ("Sevilla, 2023-2027. Data Science & AI at the Beijing", DIM)],
+        [("              ", FG),
+         ("Institute of Technology.", DIM)],
     ]),
     # Set in caps like the tagline, and sized so the block comes out 179 high
     # -- the height of the loop it sits beside -- at its own scale, so the
