@@ -1,3 +1,4 @@
 .build/preview.png
 .build/preview.html
 .claude/
+.build/cache/

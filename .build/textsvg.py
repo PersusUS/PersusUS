@@ -26,6 +26,11 @@ FONT = ".build/VT323-Regular.ttf"
 MONO = glob.glob(os.path.join(
     os.path.dirname(matplotlib.__file__),
     "mpl-data", "fonts", "ttf", "DejaVuSansMono.ttf"))[0]
+# VT323 carries no CJK. DotGothic16 does, drawn on a dot grid the way a screen
+# font is, and `.build/subset-cjk.py` cuts it down to the six characters the
+# margin of the tagline uses. It is under the SIL Open Font License, which
+# travels with it in DotGothic16-OFL.txt.
+CJK = ".build/DotGothic16-subset.ttf"
 OUT = "assets"
 
 GROUND = "#0d1117"      # GitHub dark canvas
@@ -109,9 +114,10 @@ def svg(lines, name, size=20, leading=1.0, colors=None, font=FONT,
     block in a second file falls in behind the one above it.
 
     `notes` sets (line, text) pairs in the margin the short lines leave on the
-    right - the command that would have printed the block, in the dim ink. The
-    line may be fractional, which sets the note between two of them. They fade
-    up once the block has finished playing.
+    right - the command that would have printed the block, in the dim ink. A
+    third element overrides `note_size`, `note_font` and `note_color` for that
+    one note. The line may be fractional, which sets the note between two of
+    them. They fade up once the block has finished playing.
     """
     faces = {}
 
@@ -134,11 +140,23 @@ def svg(lines, name, size=20, leading=1.0, colors=None, font=FONT,
         w = max(w, t.width(flat[cursor]) + t.advance("M") * 1.4 + 2 * pad)
 
     if notes:
+        base = dict(size=note_size, font=note_font or font,
+                    color=note_color or FG)
+        notes = [(i, text, dict(base, **(over[0] if over else {})))
+                 for i, text, *over in notes]
+        setters = {}
+
+        def note_face(opt):
+            key = (opt["font"], opt["size"])
+            if key not in setters:
+                setters[key] = Typesetter(*key)
+            return setters[key]
+
         # The margin has to be there before a note can be set in it: widen the
         # block until the line a note shares a baseline with clears it by NOTE_GAP.
-        tn0 = Typesetter(note_font or font, note_size)
-        w = max([w] + [t.width(flat[round(i)]) + NOTE_GAP + tn0.width(text)
-                       + 2 * pad for i, text in notes])
+        w = max([w] + [t.width(flat[round(i)]) + NOTE_GAP
+                       + note_face(opt).width(text) + 2 * pad
+                       for i, text, opt in notes])
 
     # Each distinct glyph is defined once and placed with <use>; VT323 repeats
     # enough that this is roughly a tenth of the size of one path per glyph.
@@ -149,11 +167,12 @@ def svg(lines, name, size=20, leading=1.0, colors=None, font=FONT,
                    for f, ch in used)
 
     if notes:
-        tn = tn0
-        marks = sorted({ch for _, text in notes for ch in text if tn.path(ch)})
-        nids = {ch: "j%d" % i for i, ch in enumerate(marks)}
-        defs += "".join('<path id="%s" d="%s"/>' % (nids[ch], tn.path(ch))
-                        for ch in marks)
+        marks = sorted({(opt["font"], opt["size"], ch) for _, text, opt in notes
+                        for ch in text if note_face(opt).path(ch)})
+        nids = {key: "j%d" % i for i, key in enumerate(marks)}
+        defs += "".join('<path id="%s" d="%s"/>'
+                        % (nids[(f, sz, ch)], setters[(f, sz)].path(ch))
+                        for f, sz, ch in marks)
 
     parts = ['<svg xmlns="http://www.w3.org/2000/svg" '
              'xmlns:xlink="http://www.w3.org/1999/xlink" width="%d" height="%d" '
@@ -209,16 +228,19 @@ def svg(lines, name, size=20, leading=1.0, colors=None, font=FONT,
                          "@media (prefers-reduced-motion:reduce)"
                          "{.nt{opacity:1;animation:none}}</style>"
                          % (delay + _runtime(flat, animate)))
-        for i, text in notes:
+        for i, text, opt in notes:
+            tn = note_face(opt)
             baseline = pad + line_h * i + size * 0.78
-            x = (w - pad - tn.width(text)) / tn.scale
+            x = w - pad - tn.width(text)
             parts.append('<g class="nt" fill="%s" transform="translate(0 %.2f) '
                          'scale(%.5f %.5f)">'
-                         % (note_color or FG, baseline, tn.scale, -tn.scale))
+                         % (opt["color"], baseline, tn.scale, -tn.scale))
             for ch in text:
-                if ch in nids:
-                    parts.append('<use xlink:href="#%s" x="%.1f"/>' % (nids[ch], x))
-                x += tn.advance(ch) / tn.scale
+                key = (opt["font"], opt["size"], ch)
+                if key in nids:
+                    parts.append('<use xlink:href="#%s" x="%.1f"/>'
+                                 % (nids[key], x / tn.scale))
+                x += tn.advance(ch)
             parts.append("</g>")
 
     parts.append("</svg>")
@@ -312,11 +334,15 @@ TAGLINE_MODES = ["type", "type", "wipe", "wipe"]
 
 BLOCKS = {
     # The margin the short lines leave carries the prompt the whole page is
-    # answering, on the first line's own baseline and in the dim ink.
+    # answering, and, against the line about safe AGI, the Instrumentality
+    # Project - cut to the height of the caps beside it rather than set at
+    # the size of the line, since DotGothic16 fills an em that VT323 does not.
     "tagline": (dict(size=30, leading=1.15, colors=[FG, FG, DIM, DIM],
                      animate=TAGLINE_MODES,
-                     notes=[(0, "persus@sevilla:~$")], note_size=20,
-                     note_color=DIM), TAGLINE),
+                     notes=[(0, "persus@sevilla:~$"),
+                            (3, "人類補完計画",
+                             dict(size=21, font=CJK))],
+                     note_size=20, note_color=DIM), TAGLINE),
     # Tags is a second file, so it cannot share a clock with the block above
     # it - it can only be held back by what that block is known to take. A
     # sweep tolerates the few milliseconds the two images load apart; a typed
@@ -350,8 +376,8 @@ BLOCKS = {
          ("Independent AI/ML research - world models, continual", DIM)],
         [("              ", FG),
          ("learning, LLM benchmarking. AI/ML developer at OrgaAI.", DIM)],
-        [("2024 - 2025   ", FG), ("Co-founder & co-CTO - ByTheWay. Closed.", DIM)],
-        [("2023 - 2024   ", FG), ("CTO - NetKey, NFC hardware. Closed.", DIM)],
+        [("2024 - 2025   ", FG), ("Co-founder & co-CTO - ByTheWay, carpooling.", DIM)],
+        [("2023 - 2024   ", FG), ("CTO - NetKey, NFC networking hardware.", DIM)],
         [("2023          ", FG), ("Speaker - Telefonica innovaTE.", DIM)],
         [("EDUCATION     ", FG),
          ("BSc Computer & Electronics Engineering, Universidad", DIM)],
