@@ -66,7 +66,7 @@
 
 <div align="center">
 
-<img src="assets/s-work.svg" width="760" alt="2025 to now: independent AI/ML research on world models, continual learning and LLM benchmarking; AI/ML developer at OrgaAI. 2024 to 2025: co-founder and co-CTO of ByTheWay, closed. 2023 to 2024: CTO at NetKey, NFC hardware, closed. 2023: speaker at Telefonica innovaTE. Education: BSc Computer and Electronics Engineering, Universidad de Sevilla, 2023 to 2027; Data Science and AI at the Beijing Institute of Technology." />
+<img src="assets/s-work.svg" width="760" alt="2026 to now: work in progress. 2025 to 2026: independent AI/ML research on world models, continual learning and LLM benchmarking; AI/ML developer at OrgaAI. 2024 to 2025: co-founder and co-CTO of ByTheWay, closed. 2023 to 2024: CTO at NetKey, NFC hardware, closed. 2023: speaker at Telefonica innovaTE. Education: BSc Computer and Electronics Engineering, Universidad de Sevilla, 2023 to 2027." />
 
 </div>
 
@@ -110,7 +110,7 @@
 <div align="center">
 
 <img src="assets/g-shark.gif" width="198" align="middle" alt="" />
-<img src="assets/s-now.svg" width="621" align="middle" alt="Organising the AI talks at the Universidad de Sevilla. Research on pushing the TPU state of the art. Building Perseo, the assistant that listens and watches." />
+<img src="assets/s-now.svg" width="635" align="middle" alt="Organising the AI talks at the Universidad de Sevilla. Research on pushing the TPU state of the art. Building Perseo, the assistant that listens and watches." />
 
 </div>
 
