@@ -333,16 +333,14 @@ TAGLINE = [
 TAGLINE_MODES = ["type", "type", "wipe", "wipe"]
 
 BLOCKS = {
-    # The margin the short lines leave carries the prompt the whole page is
-    # answering, and, against the line about safe AGI, the Instrumentality
-    # Project - cut to the height of the caps beside it rather than set at
-    # the size of the line, since DotGothic16 fills an em that VT323 does not.
+    # The Instrumentality Project, in the margin the short lines leave, against
+    # the line about safe AGI - the two say the same thing in two languages.
+    # It is cut to the height of the caps beside it rather than set at the size
+    # of the line, since DotGothic16 fills an em that VT323 does not.
     "tagline": (dict(size=30, leading=1.15, colors=[FG, FG, DIM, DIM],
                      animate=TAGLINE_MODES,
-                     notes=[(0, "persus@sevilla:~$"),
-                            (3, "人類補完計画",
-                             dict(size=21, font=CJK))],
-                     note_size=20, note_color=DIM), TAGLINE),
+                     notes=[(3, "人類補完計画")],
+                     note_size=21, note_font=CJK, note_color=DIM), TAGLINE),
     # Tags is a second file, so it cannot share a clock with the block above
     # it - it can only be held back by what that block is known to take. A
     # sweep tolerates the few milliseconds the two images load apart; a typed
@@ -411,22 +409,10 @@ PROJECTS = [
     ("NETKEY", "NFC networking startup where I was CTO"),
 ]
 
-# Every title is answered in the margin by the command that would have printed
-# the section under it. Read down the page they make a session: log in, ask who
-# this is, look at the tools, the history, the work, what is running, and how to
-# reach it.
-TITLES = [
-    ("Persus", "$ login"),
-    ("About", "$ whoami"),
-    ("Stack", "$ uname -a"),
-    ("Work", "$ history"),
-    ("Projects", "$ ls ~/projects"),
-    ("Now", "$ top"),
-    ("Contact", "$ ping persus"),
-]
+TITLES = ["Persus", "About", "Stack", "Work", "Projects", "Now", "Contact"]
 
 
-def title_svg(word, mark, size=16):
+def title_svg(word, size=16):
     """One dos_rebel title, its block characters drawn as outlines."""
     art = [line.rstrip() for line
            in pyfiglet.figlet_format(word, font="dos_rebel").split("\n")]
@@ -434,9 +420,7 @@ def title_svg(word, mark, size=16):
         art.pop()
     while art and not art[0]:
         art.pop(0)
-    svg(art, "t-" + word.lower(), size=size, leading=1.0, font=MONO,
-        notes=[((len(art) - 1) / 2.0, mark)], note_size=26, note_color=DIM,
-        note_font=FONT)
+    svg(art, "t-" + word.lower(), size=size, leading=1.0, font=MONO)
 
 
 def projects_svg():
@@ -448,8 +432,8 @@ def projects_svg():
 
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
-    for word, mark in TITLES:
-        title_svg(word, mark)
+    for word in TITLES:
+        title_svg(word)
     for name, (opts, lines) in BLOCKS.items():
         svg(lines, "s-" + name, **opts)
     projects_svg()

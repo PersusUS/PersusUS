@@ -8,7 +8,7 @@
 
 <div align="center">
 
-<img src="assets/t-persus.svg" width="630" alt="Persus" />
+<img src="assets/t-persus.svg" width="520" alt="Persus" />
 
 <br/>
 
@@ -16,7 +16,7 @@
 
 <div align="center">
 
-<img src="assets/s-tagline.svg" width="640" alt="Jesus Perez Bazarot, 21, Seville. I work on the parts of AI that break. I mean to move the world; AI is the lever. Searching for safe AGI. The Human Instrumentality Project." />
+<img src="assets/s-tagline.svg" width="536" alt="Jesus Perez Bazarot, 21, Seville. I work on the parts of AI that break. I mean to move the world; AI is the lever. Searching for safe AGI. The Human Instrumentality Project." />
 
 <img src="assets/s-tags.svg" width="700" alt="AI/ML research, continual learning, benchmarks, edge" />
 
@@ -26,7 +26,7 @@
 
 <div align="center">
 
-<img src="assets/t-about.svg" width="572" alt="About" />
+<img src="assets/t-about.svg" width="470" alt="About" />
 
 <br/>
 
@@ -42,7 +42,7 @@
 
 <div align="center">
 
-<img src="assets/t-stack.svg" width="591" alt="Stack" />
+<img src="assets/t-stack.svg" width="455" alt="Stack" />
 
 <br/>
 
@@ -58,7 +58,7 @@
 
 <div align="center">
 
-<img src="assets/t-work.svg" width="565" alt="Work" />
+<img src="assets/t-work.svg" width="440" alt="Work" />
 
 <br/>
 
@@ -74,7 +74,7 @@
 
 <div align="center">
 
-<img src="assets/t-projects.svg" width="869" alt="Projects" />
+<img src="assets/t-projects.svg" width="670" alt="Projects" />
 
 <br/>
 
@@ -101,7 +101,7 @@
 
 <div align="center">
 
-<img src="assets/t-now.svg" width="454" alt="Now" />
+<img src="assets/t-now.svg" width="360" alt="Now" />
 
 <br/>
 
@@ -118,7 +118,7 @@
 
 <div align="center">
 
-<img src="assets/t-contact.svg" width="767" alt="Contact" />
+<img src="assets/t-contact.svg" width="620" alt="Contact" />
 
 <br/>
 
