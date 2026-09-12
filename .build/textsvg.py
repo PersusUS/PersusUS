@@ -84,10 +84,19 @@ class Typesetter:
         return sum(self.advance(c) for c in text)
 
 
+def _plain(line):
+    """A line as flat text, whether it was given as one or in coloured runs."""
+    return line if isinstance(line, str) else "".join(text for text, _ in line)
+
+
 def svg(lines, name, size=20, leading=1.0, colors=None, font=FONT,
         pad=PAD, border=False, animate=None, delay=0.0,
         notes=None, note_size=24):
     """Render lines of text to assets/<name>.svg, reusing each glyph outline.
+
+    A line is either a string, which takes its colour from `colors`, or a list
+    of (text, colour) runs, which is how a name and its description share one
+    baseline in two inks.
 
     Pass `animate` a mode per line - "type" to have it typed a character at a
     time behind a cursor, "wipe" to have it swept in - and the block plays
@@ -99,20 +108,21 @@ def svg(lines, name, size=20, leading=1.0, colors=None, font=FONT,
     between two of them. They fade up once the block has finished playing.
     """
     t = Typesetter(font, size)
+    flat = [_plain(line) for line in lines]
     line_h = size * leading
-    w = max(t.width(line) for line in lines) + 2 * pad
+    w = max(t.width(line) for line in flat) + 2 * pad
     h = line_h * len(lines) + 2 * pad
 
     if notes:
         # The margin has to be there before a note can be set in it: widen the
         # block until the line a note shares a baseline with clears it by NOTE_GAP.
         tn0 = Typesetter(CJK, note_size)
-        w = max([w] + [t.width(lines[round(i)]) + NOTE_GAP + tn0.width(text)
+        w = max([w] + [t.width(flat[round(i)]) + NOTE_GAP + tn0.width(text)
                        + 2 * pad for i, text in notes])
 
     # Each distinct glyph is defined once and placed with <use>; VT323 repeats
     # enough that this is roughly a tenth of the size of one path per glyph.
-    used = sorted({ch for line in lines for ch in line if ch != " " and t.path(ch)})
+    used = sorted({ch for line in flat for ch in line if ch != " " and t.path(ch)})
     ids = {ch: "g%d" % i for i, ch in enumerate(used)}
     defs = "".join('<path id="%s" d="%s"/>' % (ids[ch], t.path(ch)) for ch in used)
 
@@ -136,20 +146,22 @@ def svg(lines, name, size=20, leading=1.0, colors=None, font=FONT,
                      % (round(w) - 1, round(h) - 1, RADIUS, RULE))
 
     for i, line in enumerate(lines):
-        fill = FG if colors is None else colors[i]
+        default = FG if colors is None else colors[i]
+        runs = [(line, default)] if isinstance(line, str) else line
         # Baseline: the ascender sits just under the top padding.
         baseline = pad + line_h * i + size * 0.78
-        parts.append('<g fill="%s" transform="translate(0 %.2f) scale(%.5f %.5f)">'
-                     % (fill, baseline, t.scale, -t.scale))
         x = pad / t.scale
-        for ch in line:
-            if ch != " " and ch in ids:
-                parts.append('<use xlink:href="#%s" x="%.1f"/>' % (ids[ch], x))
-            x += t.advance(ch) / t.scale
-        parts.append("</g>")
+        for text, fill in runs:
+            parts.append('<g fill="%s" transform="translate(0 %.2f) '
+                         'scale(%.5f %.5f)">' % (fill, baseline, t.scale, -t.scale))
+            for ch in text:
+                if ch != " " and ch in ids:
+                    parts.append('<use xlink:href="#%s" x="%.1f"/>' % (ids[ch], x))
+                x += t.advance(ch) / t.scale
+            parts.append("</g>")
 
     if animate:
-        parts.extend(_animation(lines, animate, t, size, line_h, pad,
+        parts.extend(_animation(flat, animate, t, size, line_h, pad,
                                 round(w), round(h), delay))
 
     if notes:
@@ -160,7 +172,7 @@ def svg(lines, name, size=20, leading=1.0, colors=None, font=FONT,
                          ".nt{opacity:0;animation:fade .6s %.3fs forwards}"
                          "@media (prefers-reduced-motion:reduce)"
                          "{.nt{opacity:1;animation:none}}</style>"
-                         % (delay + _runtime(lines, animate)))
+                         % (delay + _runtime(flat, animate)))
         for i, text in notes:
             baseline = pad + line_h * i + size * 0.78
             x = (w - pad - tn.width(text)) / tn.scale
@@ -274,38 +286,37 @@ BLOCKS = {
     # line, locked to the character, would not.
     "tags": (dict(size=22, colors=[DIM], animate=["wipe"],
                   delay=_runtime(TAGLINE, TAGLINE_MODES) - LEAD), [
-        "AI/ML RESEARCH  /  CONTINUAL LEARNING  /  "
-        "BENCHMARKS & EVALUATION  /  EDGE & LOCAL-FIRST",
+        "AI/ML RESEARCH  /  CONTINUAL LEARNING  /  BENCHMARKS  /  EDGE",
     ]),
     "about": (dict(size=22, leading=1.25), [
-        "Fourth-year Computer Engineering at the UNIVERSIDAD DE SEVILLA, back in",
-        "Seville since July 2026 after a year at the BEIJING INSTITUTE OF TECHNOLOGY.",
+        "Fourth-year Computer Engineering at the UNIVERSIDAD DE SEVILLA, back from",
+        "a year at the BEIJING INSTITUTE OF TECHNOLOGY.",
         "",
-        "I learn by building something, watching it fail, and rebuilding it. My",
-        "benchmark work turned up thirty problems; the worst invalidated 225 runs,",
-        "so I rewrote it rather than publish something I knew was wrong.",
-        "",
-        "Long term: a master's in AI, pointed at something worth conserving.",
+        "I learn by building, breaking and rebuilding. Long term: a master's in AI,",
+        "pointed at something worth conserving.",
     ]),
-    "stack": (dict(size=21, leading=1.2), [
-        "LANGUAGES        Python / TypeScript / Java / C / C++ / Rust / SQL",
-        "DEEP LEARNING    PyTorch / CUDA / Triton / quantisation / DDP",
-        "AI / ML          Transformers / state space models / RAG / benchmarking / agents",
-        "BACKEND & DATA   FastAPI / React / PostgreSQL / pgvector / Docker / Neo4j",
-        "HARDWARE         RTX 4050 local / RunPod for anything that does not fit",
-        "SPOKEN           Spanish (native) / English (C1) / Chinese",
+    # Label in the bright ink, what it holds in the dim one, on one baseline.
+    "stack": (dict(size=21, leading=1.3), [
+        [("LANGUAGES        ", FG), ("Python / TypeScript / Rust / C++ / SQL", DIM)],
+        [("DEEP LEARNING    ", FG), ("PyTorch / CUDA / Triton / quantisation", DIM)],
+        [("AI / ML          ", FG),
+         ("Transformers / state space models / RAG / benchmarking / agents", DIM)],
+        [("BACKEND & DATA   ", FG),
+         ("FastAPI / React / PostgreSQL / pgvector / Docker / Neo4j", DIM)],
+        [("SPOKEN           ", FG), ("Spanish / English / Chinese", DIM)],
     ]),
-    "work": (dict(size=21, leading=1.2), [
-        "2025 - now     INDEPENDENT AI/ML RESEARCH",
-        "               World models, continual learning, LLM benchmarking",
-        "               AI/ML DEVELOPER - OrgaAI, conversational AI (under NDA)",
-        "",
-        "2024 - 2025    CO-FOUNDER & CO-CTO - ByTheWay, carpooling. Closed.",
-        "2023 - 2024    CHIEF TECHNOLOGY OFFICER - NetKey, NFC hardware. Closed.",
-        "2023           TECHNOLOGY SPEAKER - Telefonica innovaTE, NB-IoT track.",
-        "",
-        "EDUCATION      BSc Computer Engineering - Universidad de Sevilla, 2023-2027",
-        "               Erasmus - Beijing Institute of Technology, to July 2026",
+    "work": (dict(size=21, leading=1.3), [
+        [("2025 - now    ", FG),
+         ("Independent AI/ML research - world models, continual", DIM)],
+        [("              ", FG),
+         ("learning, LLM benchmarking. AI/ML developer at OrgaAI.", DIM)],
+        [("2024 - 2025   ", FG), ("Co-founder & co-CTO - ByTheWay. Closed.", DIM)],
+        [("2023 - 2024   ", FG), ("CTO - NetKey, NFC hardware. Closed.", DIM)],
+        [("2023          ", FG), ("Speaker - Telefonica innovaTE.", DIM)],
+        [("EDUCATION     ", FG),
+         ("BSc Computer Engineering, Universidad de Sevilla,", DIM)],
+        [("              ", FG),
+         ("2023-2027. Erasmus at the Beijing Institute of Technology.", DIM)],
     ]),
     # Set in caps like the tagline, and sized so the block comes out 179 high
     # -- the height of the loop it sits beside -- at its own scale, so the
@@ -322,33 +333,17 @@ BLOCKS = {
 }
 
 PROJECTS = [
-    ("WMF BENCHMARK", "what a world model forgets when it learns a second task."),
-    ("", "375 cells, five methods. The forgetting hides in the encoder, where"),
-    ("", "the standard metrics do not look. Submitted to CL4FMAgents @ NeurIPS."),
-    ("", ""),
-    ("PERSEO", "a desktop assistant that listens and watches. Tauri 2, React 19,"),
-    ("", "Gemini Live over WebSocket, a local RAG over my own notes."),
-    ("", ""),
-    ("HYBRIDMAMBA-11", "31.8M parameters in 13.6 MB, the first state-space entry"),
-    ("", "in OpenAI's Parameter Golf."),
-    ("", ""),
-    ("TFG - JETSON ORIN NANO + GEMMA 3", "running a model where it does not fit."),
-    ("", ""),
-    ("MULTILINGUAL BENCHMARK", "Chinese against Western frontier models, nine"),
-    ("", "languages, four task categories."),
-    ("", ""),
-    ("NIGHTSHIFT", "an autonomous queue that claims one task a night and leaves"),
-    ("", "a Telegram report by morning. In production since August 2026."),
-    ("", ""),
-    ("KOTOBA", "the whole JLPT, N5 to N1, spaced and offline, in Spanish."),
-    ("", ""),
-    ("MAGI", "three personas answer at once; any one veto sinks the verdict."),
-    ("", ""),
-    ("AGENTIC REASONING TRACES", "15 annotated traces, a nine-type error taxonomy."),
-    ("", ""),
-    ("CLASSTRANSCRIBER", "lectures into speaker-separated notes, all running locally."),
-    ("", ""),
-    ("NETKEY", "NFC networking startup where I was CTO."),
+    ("WMF BENCHMARK", "what a world model forgets when it learns a second task"),
+    ("PERSEO", "a desktop assistant that listens and watches"),
+    ("HYBRIDMAMBA-11", "31.8M parameters in 13.6 MB, in OpenAI's Parameter Golf"),
+    ("JETSON + GEMMA 3", "a model run where it does not fit - final-year project"),
+    ("MULTILINGUAL", "Chinese against Western frontier models, nine languages"),
+    ("NIGHTSHIFT", "an autonomous queue that claims one task a night"),
+    ("KOTOBA", "the whole JLPT, N5 to N1, spaced and offline, in Spanish"),
+    ("MAGI", "three personas answer; any one veto sinks the verdict"),
+    ("TRACES", "15 annotated agent traces, a nine-type error taxonomy"),
+    ("CLASSTRANSCRIBER", "lectures into speaker-separated notes, all local"),
+    ("NETKEY", "NFC networking startup where I was CTO"),
 ]
 
 TITLES = ["Persus", "About", "Stack", "Work", "Projects", "Now", "Contact"]
@@ -366,16 +361,10 @@ def title_svg(word, size=16):
 
 
 def projects_svg():
-    """Project names in the bright ink, their descriptions in the dim one."""
-    lines, colors = [], []
-    for title, desc in PROJECTS:
-        if title:
-            lines.append(title + ("  " + desc if desc else ""))
-            colors.append(FG)
-        else:
-            lines.append(("  " + desc) if desc else "")
-            colors.append(DIM)
-    svg(lines, "s-projects", size=21, leading=1.2, colors=colors)
+    """One line a project: the name in the bright ink, what it is in the dim."""
+    col = max(len(name) for name, _ in PROJECTS) + 2
+    svg([[(name.ljust(col), FG), (desc, DIM)] for name, desc in PROJECTS],
+        "s-projects", size=21, leading=1.45)
 
 
 if __name__ == "__main__":
