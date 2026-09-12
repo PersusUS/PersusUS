@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="assets/p-hands.png" width="100%" alt="" />
+<picture><source media="(prefers-color-scheme: light)" srcset="assets/p-hands-l.png"><img src="assets/p-hands.png" width="100%" alt="" /></picture>
 
 </div>
 
@@ -8,7 +8,7 @@
 
 <div align="center">
 
-<img src="assets/t-persus.svg" width="520" alt="Persus" />
+<img src="assets/t-persus.svg" alt="Persus" />
 
 <br/>
 
@@ -16,9 +16,9 @@
 
 <div align="center">
 
-<img src="assets/s-tagline.svg" width="660" alt="Jesus Perez Bazarot, 21, Seville. I work on the parts of AI that break. I mean to move the world; AI is the lever. Searching for safe AGI." />
+<picture><source media="(max-width: 600px)" srcset="assets/s-tagline-n.svg"><img src="assets/s-tagline.svg" alt="Jesus Perez Bazarot, 21, Seville. I work on the parts of AI that break. I mean to move the world; AI is the lever. Searching for safe AGI." /></picture>
 
-<img src="assets/s-tags.svg" width="700" alt="AI/ML research, continual learning, benchmarks, edge" />
+<picture><source media="(max-width: 600px)" srcset="assets/s-tags-n.svg"><img src="assets/s-tags.svg" alt="AI/ML research, continual learning, benchmarks, edge" /></picture>
 
 </div>
 
@@ -26,7 +26,7 @@
 
 <div align="center">
 
-<img src="assets/t-about.svg" width="470" alt="About" />
+<img src="assets/t-about.svg" alt="About" />
 
 <br/>
 
@@ -34,7 +34,7 @@
 
 <div align="center">
 
-<img src="assets/s-about.svg" width="850" alt="Fourth-year Computer and Electronics Engineering at the Universidad de Sevilla, back from a year of Data Science and AI at the Beijing Institute of Technology. I learn by building, breaking and rebuilding. Long term: a master's in AI at MIT, pointed at something worth conserving." />
+<picture><source media="(max-width: 600px)" srcset="assets/s-about-n.svg"><img src="assets/s-about.svg" alt="Fourth-year Computer and Electronics Engineering at the Universidad de Sevilla, back from a year of Data Science and AI at the Beijing Institute of Technology. I learn by building, breaking and rebuilding. Long term: a master's in AI at MIT, pointed at something worth keeping." /></picture>
 
 </div>
 
@@ -42,7 +42,7 @@
 
 <div align="center">
 
-<img src="assets/t-stack.svg" width="455" alt="Stack" />
+<img src="assets/t-stack.svg" alt="Stack" />
 
 <br/>
 
@@ -50,7 +50,7 @@
 
 <div align="center">
 
-<img src="assets/s-stack.svg" width="860" alt="Languages: Python, C, C++, Assembly. Deep learning: PyTorch, CUDA, Triton, quantisation. AI/ML: transformers, state space models, RAG, benchmarking, agents. Backend and data: FastAPI, React, PostgreSQL, pgvector, Docker, Neo4j. Spoken: Spanish, English, Chinese, Japanese (work in progress)." />
+<picture><source media="(max-width: 600px)" srcset="assets/s-stack-n.svg"><img src="assets/s-stack.svg" alt="Languages: Python, C, C++, Assembly. Deep learning: PyTorch, CUDA, Triton, quantisation. AI/ML: transformers, state space models, RAG, benchmarking, agents. Backend and data: FastAPI, React, PostgreSQL, pgvector, Docker, Neo4j. Spoken: Spanish, English, Chinese, Japanese (work in progress)." /></picture>
 
 </div>
 
@@ -58,7 +58,7 @@
 
 <div align="center">
 
-<img src="assets/t-work.svg" width="440" alt="Work" />
+<img src="assets/t-work.svg" alt="Work" />
 
 <br/>
 
@@ -66,7 +66,7 @@
 
 <div align="center">
 
-<img src="assets/s-work.svg" width="760" alt="2026 to now: in progress. 2025 to 2026: independent AI/ML research on world models, continual learning and LLM benchmarking; AI/ML developer at OrgaAI. 2024 to 2025: co-founder and co-CTO of ByTheWay, carpooling. 2023 to 2024: CTO at NetKey, NFC networking hardware. 2023: speaker at Telefonica innovaTE. Education: BSc Computer and Electronics Engineering, Universidad de Sevilla, 2023 to 2027." />
+<picture><source media="(max-width: 600px)" srcset="assets/s-work-n.svg"><img src="assets/s-work.svg" alt="2026 to now: in progress. 2025 to 2026: independent AI/ML research on world models, continual learning and LLM benchmarking; AI/ML developer at OrgaAI. 2024 to 2025: co-founder and co-CTO of ByTheWay, carpooling. 2023 to 2024: CTO at NetKey, NFC networking hardware. 2023: speaker at Telefonica innovaTE. Education: BSc Computer and Electronics Engineering, Universidad de Sevilla, 2023 to 2027." /></picture>
 
 </div>
 
@@ -74,7 +74,7 @@
 
 <div align="center">
 
-<img src="assets/t-projects.svg" width="670" alt="Projects" />
+<img src="assets/t-projects.svg" alt="Projects" />
 
 <br/>
 
@@ -82,18 +82,17 @@
 
 <div align="center">
 
-<img src="assets/s-projects.svg" width="820" alt="WMF Benchmark: what a world model forgets when it learns a second task. Perseo: a desktop assistant that listens and watches. HybridMamba-11: 31.8M parameters in 13.6 MB, in OpenAI's Parameter Golf. Jetson plus Gemma 3: a model run where it does not fit, final-year project. Multilingual: Chinese against Western frontier models, nine languages. NightShift: an autonomous queue that claims one task a night. Kotoba: the whole JLPT, N5 to N1, spaced and offline, in Spanish. MAGI: three personas answer and any one veto sinks the verdict. Traces: 15 annotated agent traces, a nine-type error taxonomy. ClassTranscriber: lectures into speaker-separated notes, all local. NetKey: NFC networking startup where I was CTO." />
+<a href="https://github.com/PersusUS/WorldModelsBenchmark"><picture><source media="(max-width: 600px)" srcset="assets/s-p-wmf-n.svg"><img src="assets/s-p-wmf.svg" alt="WMF Benchmark: what a world model forgets when it learns a second task" /></picture></a>
 
-</div>
+<a href="https://persus.netlify.app/projects/perseo"><picture><source media="(max-width: 600px)" srcset="assets/s-p-perseo-n.svg"><img src="assets/s-p-perseo.svg" alt="Perseo: a desktop assistant that listens and watches" /></picture></a>
 
-<div align="center">
+<a href="https://persus.netlify.app/projects/hybridmamba"><picture><source media="(max-width: 600px)" srcset="assets/s-p-hybridmamba-n.svg"><img src="assets/s-p-hybridmamba.svg" alt="HybridMamba-11: 31.8M parameters in 13.6 MB, in OpenAI's Parameter Golf" /></picture></a>
 
-<a href="https://github.com/PersusUS/WorldModelsBenchmark"><img src="https://img.shields.io/badge/WMF_BENCHMARK-0D1117?style=for-the-badge&labelColor=0D1117" alt="WMF Benchmark" /></a>
-<a href="https://persus.netlify.app/projects/perseo"><img src="https://img.shields.io/badge/PERSEO-0D1117?style=for-the-badge&labelColor=0D1117" alt="Perseo" /></a>
-<a href="https://persus.netlify.app/projects/hybridmamba"><img src="https://img.shields.io/badge/HYBRIDMAMBA--11-0D1117?style=for-the-badge&labelColor=0D1117" alt="HybridMamba-11" /></a>
-<a href="https://persus.netlify.app/projects/jetson"><img src="https://img.shields.io/badge/JETSON_ORIN-0D1117?style=for-the-badge&labelColor=0D1117" alt="Jetson Orin" /></a>
-<a href="https://persus.netlify.app/projects/multilingual"><img src="https://img.shields.io/badge/MULTILINGUAL-0D1117?style=for-the-badge&labelColor=0D1117" alt="Multilingual Benchmark" /></a>
-<a href="https://persus.netlify.app/portfolio"><img src="https://img.shields.io/badge/ALL_PROJECTS_%E2%86%92-FFFFFF?style=for-the-badge&labelColor=FFFFFF&color=FFFFFF" alt="All projects" /></a>
+<a href="https://persus.netlify.app/projects/multilingual"><picture><source media="(max-width: 600px)" srcset="assets/s-p-multilingual-n.svg"><img src="assets/s-p-multilingual.svg" alt="Multilingual: Chinese against Western frontier models, nine languages" /></picture></a>
+
+<br/>
+
+<a href="https://persus.netlify.app/portfolio"><img src="assets/s-p-all.svg" alt="All projects" /></a>
 
 </div>
 
@@ -101,7 +100,15 @@
 
 <div align="center">
 
-<img src="assets/t-now.svg" width="360" alt="Now" />
+<picture><source media="(max-width: 600px)" srcset="assets/s-fetch-n.svg"><img src="assets/s-fetch.svg" alt="Uptime, public repositories, last push, languages by share, and pushes in the last thirty days - read from the GitHub API once a week." /></picture>
+
+</div>
+
+<br/><br/><br/>
+
+<div align="center">
+
+<img src="assets/t-now.svg" alt="Now" />
 
 <br/>
 
@@ -110,7 +117,7 @@
 <div align="center">
 
 <img src="assets/g-shark.gif" width="198" align="middle" alt="" />
-<img src="assets/s-now.svg" width="635" align="middle" alt="Organising the AI talks at the Universidad de Sevilla. Research on pushing the TPU state of the art. Building Perseo, the assistant that listens and watches." />
+<picture><source media="(max-width: 600px)" srcset="assets/s-now-n.svg"><img src="assets/s-now.svg" align="middle" alt="Organising the AI talks at the Universidad de Sevilla. Research on pushing the TPU state of the art. Building Perseo, the assistant that listens and watches." /></picture>
 
 </div>
 
@@ -118,7 +125,7 @@
 
 <div align="center">
 
-<img src="assets/t-contact.svg" width="620" alt="Contact" />
+<img src="assets/t-contact.svg" alt="Contact" />
 
 <br/>
 
@@ -126,15 +133,10 @@
 
 <div align="center">
 
-<a href="https://persus.netlify.app" title="Website"><img src="assets/i-web.svg" width="58" alt="Website" /></a>&nbsp;
-<a href="mailto:jp.bazarot@gmail.com" title="Email"><img src="assets/i-mail.svg" width="58" alt="Email" /></a>&nbsp;
-<a href="https://github.com/PersusUS" title="GitHub"><img src="assets/i-github.svg" width="58" alt="GitHub" /></a>&nbsp;
-<a href="https://www.linkedin.com/in/jpbazarot/" title="LinkedIn"><img src="assets/i-linkedin.svg" width="58" alt="LinkedIn" /></a>&nbsp;
-<a href="https://www.x.com/JPBazarot" title="Twitter"><img src="assets/i-x.svg" width="58" alt="Twitter" /></a>&nbsp;
-<a href="https://www.instagram.com/jpbazarot/" title="Instagram"><img src="assets/i-instagram.svg" width="58" alt="Instagram" /></a>&nbsp;
+<a href="https://persus.netlify.app" title="Website"><img src="assets/i-web.svg" width="58" alt="Website" /></a>&nbsp;<a href="mailto:jp.bazarot@gmail.com" title="Email"><img src="assets/i-mail.svg" width="58" alt="Email" /></a>&nbsp;<a href="https://github.com/PersusUS" title="GitHub"><img src="assets/i-github.svg" width="58" alt="GitHub" /></a>&nbsp;<a href="https://www.linkedin.com/in/jpbazarot/" title="LinkedIn"><img src="assets/i-linkedin.svg" width="58" alt="LinkedIn" /></a>&nbsp;<a href="https://www.x.com/JPBazarot" title="Twitter"><img src="assets/i-x.svg" width="58" alt="Twitter" /></a>&nbsp;<a href="https://www.instagram.com/jpbazarot/" title="Instagram"><img src="assets/i-instagram.svg" width="58" alt="Instagram" /></a>&nbsp;
 
-<img src="assets/p-angel.png" width="100%" alt="" />
+<br/><br/>
 
-<img src="assets/s-coords.svg" width="550" alt="N 42 21 36 W 71 05 31, MIT, Cambridge, Massachusetts. Not there yet. Soon there." />
+<picture><source media="(max-width: 600px)" srcset="assets/s-coords-n.svg"><img src="assets/s-coords.svg" alt="N 42 21 36 W 71 05 31, MIT, Cambridge, Massachusetts. Not there yet. Soon there." /></picture>
 
 </div>

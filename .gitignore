@@ -2,3 +2,4 @@
 .build/preview.html
 .claude/
 .build/cache/
+__pycache__/

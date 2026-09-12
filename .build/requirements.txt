@@ -1,0 +1,9 @@
+# What .build/live.py needs to redraw the fetch block inside Actions.
+# live.py imports textsvg.py, which pulls in fontTools for the glyph outlines,
+# matplotlib for the one mono font it ships with, and pyfiglet for the titles.
+# Pillow is here for .build/render.py, which shares the environment.
+# Pinned to the versions the assets in this repo were last built with.
+fonttools==4.62.0
+matplotlib==3.10.8
+pyfiglet==1.0.4
+pillow==12.1.1

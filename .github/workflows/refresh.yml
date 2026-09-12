@@ -1,0 +1,49 @@
+# Redraw the fetch block from the live profile.
+#
+# Weekly, not nightly. A daily run would put a commit on the graph most days
+# for no reason a reader could see, and a contribution graph padded by a robot
+# is worth less than an honest one.
+name: refresh
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"     # Mondays, 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: .build/requirements.txt
+
+      - run: pip install -r .build/requirements.txt
+
+      - name: Redraw
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python .build/live.py
+
+      - name: Commit, but only if anything actually moved
+        run: |
+          if git diff --quiet -- assets/s-fetch.svg assets/s-fetch-n.svg; then
+            echo "nothing changed"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/s-fetch.svg assets/s-fetch-n.svg
+          git commit -m "Let the fetch block say where the week left things"
+          git push
