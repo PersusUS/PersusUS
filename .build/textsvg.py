@@ -309,11 +309,11 @@ def _runtime(lines, modes):
 
 # The two lines that say who he is are typed; the two that qualify it are
 # swept in behind them, which keeps the whole opening under three seconds
-# instead of the five it would take to type all 147 characters.
+# instead of the four it would take to type all 137 characters.
 TAGLINE = [
     "JESUS PEREZ BAZAROT - 21 - SEVILLE",
     "I WORK ON THE PARTS OF AI THAT BREAK.",
-    "I MEAN TO MOVE THE WORLD, AND I AM STARTING WITH AI.",
+    "I MEAN TO MOVE THE WORLD. AI IS THE LEVER.",
     "SEARCHING FOR SAFE AGI.",
 ]
 TAGLINE_MODES = ["type", "type", "wipe", "wipe"]
