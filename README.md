@@ -116,6 +116,8 @@
 
 <br/><br/>
 
+<picture><source media="(prefers-color-scheme: light)" srcset="assets/p-angel-l.png"><img src="assets/p-angel.png" width="100%" alt="" /></picture>
+
 <picture><source media="(max-width: 600px)" srcset="assets/s-coords-n.svg"><img src="assets/s-coords.svg" alt="N 42 21 36 W 71 05 31, MIT, Cambridge, Massachusetts. Not there yet. Soon there." /></picture>
 
 </div>

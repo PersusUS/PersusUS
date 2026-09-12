@@ -1,11 +1,12 @@
-"""Prepare the photo the README opens with, one copy per theme.
+"""Prepare the two photos the README stands on, one copy of each per theme.
 
 The source is white-on-black line art. A photo cannot take its colour from a
 stylesheet the way the typeset blocks do, so it is written out twice instead:
 `p-hands.png` puts the drawing in white on GitHub's dark canvas, and
 `p-hands-l.png` puts it in GitHub's dark ink on white. The README picks between
 them with <picture media="(prefers-color-scheme: light)">, so neither theme gets
-a black rectangle dropped into it.
+a black rectangle dropped into it. The poster that closes the page is handled
+the same way.
 
 Also dumps the dos_rebel titles, which `.build/textsvg.py` typesets.
 
@@ -84,4 +85,5 @@ def dump_titles():
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
     photo("01-hands.png", "p-hands.png")
+    photo("02-creative-ecstasy.jpg", "p-angel.png")
     dump_titles()
