@@ -16,7 +16,7 @@
 
 <div align="center">
 
-<img src="assets/s-tagline.svg" width="656" alt="Jesus Perez Bazarot, 21, Seville. I mean to move the world, and I am starting with AI. I work on the parts of AI that break. Searching for safe AGI." />
+<img src="assets/s-tagline.svg" width="656" alt="Jesus Perez Bazarot, 21, Seville. I work on the parts of AI that break. I mean to move the world, and I am starting with AI. Searching for safe AGI." />
 
 <img src="assets/s-tags.svg" width="810" alt="AI/ML research, continual learning, benchmarks and evaluation, edge and local-first" />
 
@@ -34,7 +34,7 @@
 
 <div align="center">
 
-<img src="assets/s-about.svg" width="880" alt="Fourth-year Computer Engineering at the Universidad de Sevilla, back in Seville since July 2026 after spending third year at the Beijing Institute of Technology. I work on the parts of AI that break: models that forget what they learned, models too large for the hardware they need to run on, benchmarks that quietly measure the wrong thing. Most of what I know I learned by building something, watching it fail in an interesting way, and rebuilding it. My benchmark work took seven debugging sessions and turned up thirty problems; the worst of them, a collapsed VAE posterior with 0 of 32 latent dimensions active, meant the transition model had never seen the environment at all and invalidated 225 runs. Rewriting from scratch was less painful than publishing something I knew was wrong. Long term: a master's in AI, and work where machine learning is pointed at something worth conserving, marine ecology for a start." />
+<img src="assets/s-about.svg" width="890" alt="Fourth-year Computer Engineering at the Universidad de Sevilla, back in Seville since July 2026 after a year at the Beijing Institute of Technology. I learn by building something, watching it fail, and rebuilding it. My benchmark work turned up thirty problems; the worst invalidated 225 runs, so I rewrote it rather than publish something I knew was wrong. Long term: a master's in AI, pointed at something worth conserving." />
 
 </div>
 
@@ -50,7 +50,7 @@
 
 <div align="center">
 
-<img src="assets/s-stack.svg" width="900" alt="Languages: Python, TypeScript, Java, C, C++, Rust, SQL, Assembly. Deep learning: PyTorch, CUDA, Triton, torch.compile, BF16, quantisation, DDP. AI/ML: transformers, state space models, RAG, speech pipelines, diarisation, benchmarking, agents and multi-agent systems. Backend and data: FastAPI, React, Supabase, PostgreSQL, pgvector, Docker, Neo4j, WebSockets. Hardware: RTX 4050 local, RunPod for anything that does not fit. Spoken: Spanish native, English C1, Chinese conversational." />
+<img src="assets/s-stack.svg" width="858" alt="Languages: Python, TypeScript, Java, C, C++, Rust, SQL. Deep learning: PyTorch, CUDA, Triton, quantisation, DDP. AI/ML: transformers, state space models, RAG, benchmarking, agents. Backend and data: FastAPI, React, PostgreSQL, pgvector, Docker, Neo4j. Hardware: RTX 4050 local, RunPod for anything that does not fit. Spoken: Spanish native, English C1, Chinese." />
 
 </div>
 
@@ -66,7 +66,7 @@
 
 <div align="center">
 
-<img src="assets/s-work.svg" width="830" alt="2025 to now: independent AI/ML research on world models, continual learning and LLM benchmarking. AI/ML developer at OrgaAI, conversational AI, audio and transcription, under NDA. 2024 to 2025: co-founder and co-CTO of ByTheWay, a carpooling venture, closed. 2023 to 2024: chief technology officer at NetKey, NFC networking hardware, closed. 2023: technology speaker at Telefonica innovaTE, NB-IoT and sustainability track. Education: BSc Computer Engineering at the Universidad de Sevilla, 2023 to 2027, with an Erasmus at the Beijing Institute of Technology to July 2026." />
+<img src="assets/s-work.svg" width="820" alt="2025 to now: independent AI/ML research on world models, continual learning and LLM benchmarking; AI/ML developer at OrgaAI, conversational AI, under NDA. 2024 to 2025: co-founder and co-CTO of ByTheWay, carpooling, closed. 2023 to 2024: chief technology officer at NetKey, NFC hardware, closed. 2023: technology speaker at Telefonica innovaTE, NB-IoT track. Education: BSc Computer Engineering at the Universidad de Sevilla, 2023 to 2027, with an Erasmus at the Beijing Institute of Technology to July 2026." />
 
 </div>
 
@@ -82,7 +82,7 @@
 
 <div align="center">
 
-<img src="assets/s-projects.svg" width="800" alt="WMF Benchmark: what a world model forgets when it learns a second task. 375 cells, 75 reference pairs, five methods, zero NaN steps. The distance axis does not order forgetting, rank correlation +0.00, and almost all of it happens in the encoder where the standard metrics do not look: finetuning loses task-A reconstruction by a factor of 811 while its fidelity score reports an improvement. Submitted to CL4FMAgents at NeurIPS 2026, notification 29 September. Perseo: a desktop assistant that listens and watches, Tauri 2, React 19, Gemini Live over WebSocket, a clap detector with voice confirmation, a ChromaDB RAG over my own notes, built April to June 2026 in Beijing then audited. HybridMamba-11: 31.8M parameters in 13.6 MB, the first state-space entry in OpenAI's Parameter Golf, closed when the H100 credits ran out. TFG on a Jetson Orin Nano with Gemma 3: three pillars on running a model where it does not fit, proposal stage. Multilingual benchmark: Chinese against Western frontier models across nine languages and four task categories, blocked on API credits. NightShift: an autonomous queue that claims one task a night and leaves a Telegram report by morning, in production since August 2026. Kotoba: the whole JLPT, N5 to N1, spaced and offline, in Spanish. MAGI: three personas answer at once and any one veto sinks the verdict. Agentic Reasoning Traces: 15 annotated traces, 142 steps, a nine-type error taxonomy, human review pending. ClassTranscriber: lectures into speaker-separated notes, all running locally. NetKey: NFC networking startup where I was CTO." />
+<img src="assets/s-projects.svg" width="853" alt="WMF Benchmark: what a world model forgets when it learns a second task. 375 cells, five methods; the forgetting hides in the encoder, where the standard metrics do not look. Submitted to CL4FMAgents at NeurIPS. Perseo: a desktop assistant that listens and watches, Tauri 2, React 19, Gemini Live over WebSocket, a local RAG over my own notes. HybridMamba-11: 31.8M parameters in 13.6 MB, the first state-space entry in OpenAI's Parameter Golf. TFG on a Jetson Orin Nano with Gemma 3: running a model where it does not fit. Multilingual benchmark: Chinese against Western frontier models, nine languages, four task categories. NightShift: an autonomous queue that claims one task a night and leaves a Telegram report by morning, in production since August 2026. Kotoba: the whole JLPT, N5 to N1, spaced and offline, in Spanish. MAGI: three personas answer at once and any one veto sinks the verdict. Agentic Reasoning Traces: 15 annotated traces and a nine-type error taxonomy. ClassTranscriber: lectures into speaker-separated notes, all running locally. NetKey: NFC networking startup where I was CTO." />
 
 </div>
 
