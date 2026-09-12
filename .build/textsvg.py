@@ -26,12 +26,6 @@ FONT = ".build/VT323-Regular.ttf"
 MONO = glob.glob(os.path.join(
     os.path.dirname(matplotlib.__file__),
     "mpl-data", "fonts", "ttf", "DejaVuSansMono.ttf"))[0]
-# VT323 carries no CJK. DotGothic16 does, and is drawn on a dot grid the way a
-# screen font is, so the kanji in the margin read as something the same machine
-# put there. `.build/subset-cjk.py` cuts the 2 MB upstream release down to the
-# six characters wanted here. DotGothic16 is under the SIL Open Font License,
-# which travels with it in DotGothic16-OFL.txt.
-CJK = ".build/DotGothic16-subset.ttf"
 OUT = "assets"
 
 GROUND = "#0d1117"      # GitHub dark canvas
@@ -41,7 +35,6 @@ RULE = "#30363d"        # GitHub's own border grey
 RADIUS = 18             # px the bordered blocks are rounded by
 PAD = 16                # px of ground around the text
 NOTE_GAP = 64           # px between a line and the note set out to its right
-CJK_FIT = 0.74          # kanji are cut to this of the size the line was set at
 
 # The tagline is typed out rather than simply being there. Timings are in
 # seconds, and are spent from a clock that starts when the image loads.
@@ -99,7 +92,8 @@ def _runs(line, fill, font):
 
 def svg(lines, name, size=20, leading=1.0, colors=None, font=FONT,
         pad=PAD, border=False, animate=None, delay=0.0,
-        notes=None, note_size=24, note_color=None, cursor=None):
+        notes=None, note_size=24, note_color=None, note_font=None,
+        cursor=None):
     """Render lines of text to assets/<name>.svg, reusing each glyph outline.
 
     A line is either a string, which takes its colour from `colors`, or a list
@@ -115,17 +109,15 @@ def svg(lines, name, size=20, leading=1.0, colors=None, font=FONT,
     block in a second file falls in behind the one above it.
 
     `notes` sets (line, text) pairs in the margin the short lines leave on the
-    right, in the second face. The line may be fractional, which sets the note
-    between two of them. They fade up once the block has finished playing.
+    right - the command that would have printed the block, in the dim ink. The
+    line may be fractional, which sets the note between two of them. They fade
+    up once the block has finished playing.
     """
     faces = {}
 
     def face(path):
-        # DotGothic16 fills its em where VT323 leaves a third of it empty, so
-        # kanji set in a line of VT323 are cut to match the height of the caps
-        # beside them rather than the size they were asked for.
         if path not in faces:
-            faces[path] = Typesetter(path, size * (CJK_FIT if path == CJK else 1))
+            faces[path] = Typesetter(path, size)
         return faces[path]
 
     t = face(font)
@@ -144,7 +136,7 @@ def svg(lines, name, size=20, leading=1.0, colors=None, font=FONT,
     if notes:
         # The margin has to be there before a note can be set in it: widen the
         # block until the line a note shares a baseline with clears it by NOTE_GAP.
-        tn0 = Typesetter(CJK, note_size)
+        tn0 = Typesetter(note_font or font, note_size)
         w = max([w] + [t.width(flat[round(i)]) + NOTE_GAP + tn0.width(text)
                        + 2 * pad for i, text in notes])
 
@@ -319,11 +311,12 @@ TAGLINE = [
 TAGLINE_MODES = ["type", "type", "wipe", "wipe"]
 
 BLOCKS = {
-    # The Instrumentality Project, in the margin the two short lines leave,
-    # on the first line's own baseline and in the bright ink.
+    # The margin the short lines leave carries the prompt the whole page is
+    # answering, on the first line's own baseline and in the dim ink.
     "tagline": (dict(size=30, leading=1.15, colors=[FG, FG, DIM, DIM],
                      animate=TAGLINE_MODES,
-                     notes=[(0, "人類補完計画")], note_size=26), TAGLINE),
+                     notes=[(0, "persus@sevilla:~$")], note_size=20,
+                     note_color=DIM), TAGLINE),
     # Tags is a second file, so it cannot share a clock with the block above
     # it - it can only be held back by what that block is known to take. A
     # sweep tolerates the few milliseconds the two images load apart; a typed
@@ -348,10 +341,11 @@ BLOCKS = {
          ("Transformers / state space models / RAG / benchmarking / agents", DIM)],
         [("BACKEND & DATA   ", FG),
          ("FastAPI / React / PostgreSQL / pgvector / Docker / Neo4j", DIM)],
-        [("SPOKEN           ", FG), ("Spanish / English / Chinese", DIM)],
+        [("SPOKEN           ", FG),
+         ("Spanish / English / Chinese / Japanese (work in progress)", DIM)],
     ]),
     "work": (dict(size=21, leading=1.3), [
-        [("2026 - now    ", FG), ("進行中", DIM, CJK)],
+        [("2026 - now    ", FG), ("[ RUNNING ]", DIM)],
         [("2025 - 2026   ", FG),
          ("Independent AI/ML research - world models, continual", DIM)],
         [("              ", FG),
@@ -391,17 +385,18 @@ PROJECTS = [
     ("NETKEY", "NFC networking startup where I was CTO"),
 ]
 
-# Each title is answered in the margin by the one word that names the section,
-# in the same dot matrix as the Instrumentality Project above it. The name
-# itself is answered in katakana, the way a foreign name is written in Japan.
+# Every title is answered in the margin by the command that would have printed
+# the section under it. Read down the page they make a session: log in, ask who
+# this is, look at the tools, the history, the work, what is running, and how to
+# reach it.
 TITLES = [
-    ("Persus", "ペルサス"),
-    ("About", "紹介"),
-    ("Stack", "道具"),
-    ("Work", "経歴"),
-    ("Projects", "作品"),
-    ("Now", "現在"),
-    ("Contact", "連絡"),
+    ("Persus", "$ login"),
+    ("About", "$ whoami"),
+    ("Stack", "$ uname -a"),
+    ("Work", "$ history"),
+    ("Projects", "$ ls ~/projects"),
+    ("Now", "$ top"),
+    ("Contact", "$ ping persus"),
 ]
 
 
@@ -414,7 +409,8 @@ def title_svg(word, mark, size=16):
     while art and not art[0]:
         art.pop(0)
     svg(art, "t-" + word.lower(), size=size, leading=1.0, font=MONO,
-        notes=[((len(art) - 1) / 2.0, mark)], note_size=34, note_color=DIM)
+        notes=[((len(art) - 1) / 2.0, mark)], note_size=26, note_color=DIM,
+        note_font=FONT)
 
 
 def projects_svg():

@@ -8,7 +8,7 @@
 
 <div align="center">
 
-<img src="assets/t-persus.svg" width="685" alt="Persus" />
+<img src="assets/t-persus.svg" width="630" alt="Persus" />
 
 <br/>
 
@@ -16,7 +16,7 @@
 
 <div align="center">
 
-<img src="assets/s-tagline.svg" width="660" alt="Jesus Perez Bazarot, 21, Seville. I work on the parts of AI that break. I mean to move the world; AI is the lever. Searching for safe AGI." />
+<img src="assets/s-tagline.svg" width="640" alt="Jesus Perez Bazarot, 21, Seville. I work on the parts of AI that break. I mean to move the world; AI is the lever. Searching for safe AGI." />
 
 <img src="assets/s-tags.svg" width="700" alt="AI/ML research, continual learning, benchmarks, edge" />
 
@@ -26,7 +26,7 @@
 
 <div align="center">
 
-<img src="assets/t-about.svg" width="560" alt="About" />
+<img src="assets/t-about.svg" width="572" alt="About" />
 
 <br/>
 
@@ -42,7 +42,7 @@
 
 <div align="center">
 
-<img src="assets/t-stack.svg" width="560" alt="Stack" />
+<img src="assets/t-stack.svg" width="591" alt="Stack" />
 
 <br/>
 
@@ -50,7 +50,7 @@
 
 <div align="center">
 
-<img src="assets/s-stack.svg" width="860" alt="Languages: Python, C, C++, Assembly. Deep learning: PyTorch, CUDA, Triton, quantisation. AI/ML: transformers, state space models, RAG, benchmarking, agents. Backend and data: FastAPI, React, PostgreSQL, pgvector, Docker, Neo4j. Spoken: Spanish, English, Chinese." />
+<img src="assets/s-stack.svg" width="860" alt="Languages: Python, C, C++, Assembly. Deep learning: PyTorch, CUDA, Triton, quantisation. AI/ML: transformers, state space models, RAG, benchmarking, agents. Backend and data: FastAPI, React, PostgreSQL, pgvector, Docker, Neo4j. Spoken: Spanish, English, Chinese, Japanese (work in progress)." />
 
 </div>
 
@@ -58,7 +58,7 @@
 
 <div align="center">
 
-<img src="assets/t-work.svg" width="542" alt="Work" />
+<img src="assets/t-work.svg" width="565" alt="Work" />
 
 <br/>
 
@@ -66,7 +66,7 @@
 
 <div align="center">
 
-<img src="assets/s-work.svg" width="760" alt="2026 to now: work in progress. 2025 to 2026: independent AI/ML research on world models, continual learning and LLM benchmarking; AI/ML developer at OrgaAI. 2024 to 2025: co-founder and co-CTO of ByTheWay, closed. 2023 to 2024: CTO at NetKey, NFC hardware, closed. 2023: speaker at Telefonica innovaTE. Education: BSc Computer and Electronics Engineering, Universidad de Sevilla, 2023 to 2027." />
+<img src="assets/s-work.svg" width="760" alt="2026 to now: running. 2025 to 2026: independent AI/ML research on world models, continual learning and LLM benchmarking; AI/ML developer at OrgaAI. 2024 to 2025: co-founder and co-CTO of ByTheWay, closed. 2023 to 2024: CTO at NetKey, NFC hardware, closed. 2023: speaker at Telefonica innovaTE. Education: BSc Computer and Electronics Engineering, Universidad de Sevilla, 2023 to 2027." />
 
 </div>
 
@@ -74,7 +74,7 @@
 
 <div align="center">
 
-<img src="assets/t-projects.svg" width="793" alt="Projects" />
+<img src="assets/t-projects.svg" width="869" alt="Projects" />
 
 <br/>
 
@@ -101,7 +101,7 @@
 
 <div align="center">
 
-<img src="assets/t-now.svg" width="468" alt="Now" />
+<img src="assets/t-now.svg" width="454" alt="Now" />
 
 <br/>
 
@@ -118,7 +118,7 @@
 
 <div align="center">
 
-<img src="assets/t-contact.svg" width="709" alt="Contact" />
+<img src="assets/t-contact.svg" width="767" alt="Contact" />
 
 <br/>
 
