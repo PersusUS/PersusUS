@@ -32,7 +32,10 @@ LICENCE = ".build/DotGothic16-OFL.txt"
 
 # The margin of the tagline (the Instrumentality Project) and the standing
 # entry in the work block: in progress.
-TEXT = "\u4eba\u985e\u88dc\u5b8c\u8a08\u753b\u9032\u884c\u4e2d"
+TEXT = ("\u4eba\u985e\u88dc\u5b8c\u8a08\u753b"      # the Instrumentality Project
+        "\u9032\u884c\u4e2d"                  # in progress
+        "\u30da\u30eb\u30b5\u30b9"              # Persus, in katakana
+        "\u7d39\u4ecb\u9053\u5177\u7d4c\u6b74\u4f5c\u54c1\u73fe\u5728\u9023\u7d61")  # the section names
 
 
 def source():

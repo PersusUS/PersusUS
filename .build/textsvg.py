@@ -40,7 +40,8 @@ DIM = "#8b949e"
 RULE = "#30363d"        # GitHub's own border grey
 RADIUS = 18             # px the bordered blocks are rounded by
 PAD = 16                # px of ground around the text
-NOTE_GAP = 48           # px between a line and the note set out to its right
+NOTE_GAP = 64           # px between a line and the note set out to its right
+CJK_FIT = 0.74          # kanji are cut to this of the size the line was set at
 
 # The tagline is typed out rather than simply being there. Timings are in
 # seconds, and are spent from a clock that starts when the image loads.
@@ -98,16 +99,15 @@ def _runs(line, fill, font):
 
 def svg(lines, name, size=20, leading=1.0, colors=None, font=FONT,
         pad=PAD, border=False, animate=None, delay=0.0,
-        notes=None, note_size=24, scan=False, cursor=None):
+        notes=None, note_size=24, note_color=None, cursor=None):
     """Render lines of text to assets/<name>.svg, reusing each glyph outline.
 
     A line is either a string, which takes its colour from `colors`, or a list
     of (text, colour) runs - (text, colour, face) to change typeface mid-line -
     which is how a name and its description share one baseline in two inks.
 
-    `scan` sends a soft band down the block for as long as the page is open,
-    the way a phosphor screen is refreshed. `cursor` parks a blinking block at
-    the end of the line it names, which is what a terminal does when it waits.
+    `cursor` parks a blinking block at the end of the line it names, which is
+    what a terminal does when it is waiting for the next thing.
 
     Pass `animate` a mode per line - "type" to have it typed a character at a
     time behind a cursor, "wipe" to have it swept in - and the block plays
@@ -121,8 +121,11 @@ def svg(lines, name, size=20, leading=1.0, colors=None, font=FONT,
     faces = {}
 
     def face(path):
+        # DotGothic16 fills its em where VT323 leaves a third of it empty, so
+        # kanji set in a line of VT323 are cut to match the height of the caps
+        # beside them rather than the size they were asked for.
         if path not in faces:
-            faces[path] = Typesetter(path, size)
+            faces[path] = Typesetter(path, size * (CJK_FIT if path == CJK else 1))
         return faces[path]
 
     t = face(font)
@@ -205,24 +208,6 @@ def svg(lines, name, size=20, leading=1.0, colors=None, font=FONT,
                      % (pad + t.width(flat[cursor]) + t.advance("M") * 0.3,
                         baseline - size * 0.74, t.advance("M"), size * 0.8, FG))
 
-    if scan:
-        # A band of light crossing the block for as long as the page is open,
-        # slow enough to be felt rather than watched, and at the opacity of a
-        # reflection, so nothing under it becomes harder to read.
-        band = round(size * 4)
-        parts.append('<defs><linearGradient id="sc" x1="0" y1="0" x2="0" y2="1">'
-                     '<stop offset="0" stop-color="%s" stop-opacity="0"/>'
-                     '<stop offset=".5" stop-color="%s" stop-opacity=".05"/>'
-                     '<stop offset="1" stop-color="%s" stop-opacity="0"/>'
-                     '</linearGradient></defs>' % (FG, FG, FG))
-        parts.append('<style>@keyframes sw{from{transform:translateY(%dpx)}'
-                     'to{transform:translateY(%dpx)}}'
-                     '.sw{animation:sw %.1fs linear infinite}'
-                     '@media (prefers-reduced-motion:reduce){.sw{display:none}}'
-                     '</style>' % (-band, round(h), max(6.0, h / 26.0)))
-        parts.append('<rect class="sw" x="0" y="0" width="100%%" height="%d" '
-                     'fill="url(#sc)"/>' % band)
-
     if notes:
         # Painted after the covers, so a cover parked to the right of the line
         # it has just uncovered cannot sit on top of the margin.
@@ -237,7 +222,7 @@ def svg(lines, name, size=20, leading=1.0, colors=None, font=FONT,
             x = (w - pad - tn.width(text)) / tn.scale
             parts.append('<g class="nt" fill="%s" transform="translate(0 %.2f) '
                          'scale(%.5f %.5f)">'
-                         % (FG, baseline, tn.scale, -tn.scale))
+                         % (note_color or FG, baseline, tn.scale, -tn.scale))
             for ch in text:
                 if ch in nids:
                     parts.append('<use xlink:href="#%s" x="%.1f"/>' % (nids[ch], x))
@@ -347,7 +332,7 @@ BLOCKS = {
                   delay=_runtime(TAGLINE, TAGLINE_MODES) - LEAD), [
         "AI/ML RESEARCH  /  CONTINUAL LEARNING  /  BENCHMARKS  /  EDGE",
     ]),
-    "about": (dict(size=22, leading=1.25, scan=True), [
+    "about": (dict(size=22, leading=1.25), [
         "Fourth-year Computer & Electronics Engineering at the UNIVERSIDAD DE",
         "SEVILLA, back from a year of Data Science & AI at the BEIJING INSTITUTE",
         "OF TECHNOLOGY.",
@@ -356,7 +341,7 @@ BLOCKS = {
         "at MIT, pointed at something worth conserving.",
     ]),
     # Label in the bright ink, what it holds in the dim one, on one baseline.
-    "stack": (dict(size=21, leading=1.3, scan=True), [
+    "stack": (dict(size=21, leading=1.3), [
         [("LANGUAGES        ", FG), ("Python / C / C++ / Assembly", DIM)],
         [("DEEP LEARNING    ", FG), ("PyTorch / CUDA / Triton / quantisation", DIM)],
         [("AI / ML          ", FG),
@@ -365,8 +350,8 @@ BLOCKS = {
          ("FastAPI / React / PostgreSQL / pgvector / Docker / Neo4j", DIM)],
         [("SPOKEN           ", FG), ("Spanish / English / Chinese", DIM)],
     ]),
-    "work": (dict(size=21, leading=1.3, scan=True), [
-        [("2026 - now    ", FG), ("進行中", FG, CJK)],
+    "work": (dict(size=21, leading=1.3), [
+        [("2026 - now    ", FG), ("進行中", DIM, CJK)],
         [("2025 - 2026   ", FG),
          ("Independent AI/ML research - world models, continual", DIM)],
         [("              ", FG),
@@ -406,10 +391,21 @@ PROJECTS = [
     ("NETKEY", "NFC networking startup where I was CTO"),
 ]
 
-TITLES = ["Persus", "About", "Stack", "Work", "Projects", "Now", "Contact"]
+# Each title is answered in the margin by the one word that names the section,
+# in the same dot matrix as the Instrumentality Project above it. The name
+# itself is answered in katakana, the way a foreign name is written in Japan.
+TITLES = [
+    ("Persus", "ペルサス"),
+    ("About", "紹介"),
+    ("Stack", "道具"),
+    ("Work", "経歴"),
+    ("Projects", "作品"),
+    ("Now", "現在"),
+    ("Contact", "連絡"),
+]
 
 
-def title_svg(word, size=16):
+def title_svg(word, mark, size=16):
     """One dos_rebel title, its block characters drawn as outlines."""
     art = [line.rstrip() for line
            in pyfiglet.figlet_format(word, font="dos_rebel").split("\n")]
@@ -417,20 +413,21 @@ def title_svg(word, size=16):
         art.pop()
     while art and not art[0]:
         art.pop(0)
-    svg(art, "t-" + word.lower(), size=size, leading=1.0, font=MONO)
+    svg(art, "t-" + word.lower(), size=size, leading=1.0, font=MONO,
+        notes=[((len(art) - 1) / 2.0, mark)], note_size=34, note_color=DIM)
 
 
 def projects_svg():
     """One line a project: the name in the bright ink, what it is in the dim."""
     col = max(len(name) for name, _ in PROJECTS) + 2
     svg([[(name.ljust(col), FG), (desc, DIM)] for name, desc in PROJECTS],
-        "s-projects", size=21, leading=1.45, scan=True)
+        "s-projects", size=21, leading=1.45)
 
 
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
-    for word in TITLES:
-        title_svg(word)
+    for word, mark in TITLES:
+        title_svg(word, mark)
     for name, (opts, lines) in BLOCKS.items():
         svg(lines, "s-" + name, **opts)
     projects_svg()
