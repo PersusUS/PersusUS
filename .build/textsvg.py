@@ -86,17 +86,28 @@ class Typesetter:
 
 def _plain(line):
     """A line as flat text, whether it was given as one or in coloured runs."""
-    return line if isinstance(line, str) else "".join(text for text, _ in line)
+    return line if isinstance(line, str) else "".join(run[0] for run in line)
+
+
+def _runs(line, fill, font):
+    """A line as (text, colour, face) runs, filling in what it left unsaid."""
+    if isinstance(line, str):
+        return [(line, fill, font)]
+    return [(run[0], run[1], run[2] if len(run) > 2 else font) for run in line]
 
 
 def svg(lines, name, size=20, leading=1.0, colors=None, font=FONT,
         pad=PAD, border=False, animate=None, delay=0.0,
-        notes=None, note_size=24):
+        notes=None, note_size=24, scan=False, cursor=None):
     """Render lines of text to assets/<name>.svg, reusing each glyph outline.
 
     A line is either a string, which takes its colour from `colors`, or a list
-    of (text, colour) runs, which is how a name and its description share one
-    baseline in two inks.
+    of (text, colour) runs - (text, colour, face) to change typeface mid-line -
+    which is how a name and its description share one baseline in two inks.
+
+    `scan` sends a soft band down the block for as long as the page is open,
+    the way a phosphor screen is refreshed. `cursor` parks a blinking block at
+    the end of the line it names, which is what a terminal does when it waits.
 
     Pass `animate` a mode per line - "type" to have it typed a character at a
     time behind a cursor, "wipe" to have it swept in - and the block plays
@@ -107,11 +118,25 @@ def svg(lines, name, size=20, leading=1.0, colors=None, font=FONT,
     right, in the second face. The line may be fractional, which sets the note
     between two of them. They fade up once the block has finished playing.
     """
-    t = Typesetter(font, size)
+    faces = {}
+
+    def face(path):
+        if path not in faces:
+            faces[path] = Typesetter(path, size)
+        return faces[path]
+
+    t = face(font)
     flat = [_plain(line) for line in lines]
+    drawn = [_runs(line, FG if colors is None else colors[i], font)
+             for i, line in enumerate(lines)]
     line_h = size * leading
-    w = max(t.width(line) for line in flat) + 2 * pad
+    w = max(sum(face(f).width(text) for text, _, f in runs)
+            for runs in drawn) + 2 * pad
     h = line_h * len(lines) + 2 * pad
+
+    if cursor is not None:
+        # Leave the cursor somewhere to sit, or it lands on the right edge.
+        w = max(w, t.width(flat[cursor]) + t.advance("M") * 1.4 + 2 * pad)
 
     if notes:
         # The margin has to be there before a note can be set in it: widen the
@@ -122,9 +147,11 @@ def svg(lines, name, size=20, leading=1.0, colors=None, font=FONT,
 
     # Each distinct glyph is defined once and placed with <use>; VT323 repeats
     # enough that this is roughly a tenth of the size of one path per glyph.
-    used = sorted({ch for line in flat for ch in line if ch != " " and t.path(ch)})
-    ids = {ch: "g%d" % i for i, ch in enumerate(used)}
-    defs = "".join('<path id="%s" d="%s"/>' % (ids[ch], t.path(ch)) for ch in used)
+    used = sorted({(f, ch) for runs in drawn for text, _, f in runs
+                   for ch in text if ch != " " and face(f).path(ch)})
+    ids = {key: "g%d" % i for i, key in enumerate(used)}
+    defs = "".join('<path id="%s" d="%s"/>' % (ids[(f, ch)], face(f).path(ch))
+                   for f, ch in used)
 
     if notes:
         tn = tn0
@@ -145,24 +172,56 @@ def svg(lines, name, size=20, leading=1.0, colors=None, font=FONT,
                      'fill="none" stroke="%s"/>'
                      % (round(w) - 1, round(h) - 1, RADIUS, RULE))
 
-    for i, line in enumerate(lines):
-        default = FG if colors is None else colors[i]
-        runs = [(line, default)] if isinstance(line, str) else line
+    for i, runs in enumerate(drawn):
         # Baseline: the ascender sits just under the top padding.
         baseline = pad + line_h * i + size * 0.78
-        x = pad / t.scale
-        for text, fill in runs:
+        x = pad
+        for text, fill, f in runs:
+            tf = face(f)
             parts.append('<g fill="%s" transform="translate(0 %.2f) '
-                         'scale(%.5f %.5f)">' % (fill, baseline, t.scale, -t.scale))
+                         'scale(%.5f %.5f)">'
+                         % (fill, baseline, tf.scale, -tf.scale))
             for ch in text:
-                if ch != " " and ch in ids:
-                    parts.append('<use xlink:href="#%s" x="%.1f"/>' % (ids[ch], x))
-                x += t.advance(ch) / t.scale
+                if ch != " " and (f, ch) in ids:
+                    parts.append('<use xlink:href="#%s" x="%.1f"/>'
+                                 % (ids[(f, ch)], x / tf.scale))
+                x += tf.advance(ch)
             parts.append("</g>")
 
     if animate:
         parts.extend(_animation(flat, animate, t, size, line_h, pad,
                                 round(w), round(h), delay))
+
+    if cursor is not None:
+        # A block left waiting at the end of a line, blinking on the same
+        # cycle as the one that types the tagline out.
+        baseline = pad + line_h * cursor + size * 0.78
+        parts.append('<style>@keyframes bk{50%%{opacity:0}}'
+                     '.cr{animation:bk %.2fs step-end infinite}'
+                     '@media (prefers-reduced-motion:reduce){.cr{animation:none}}'
+                     '</style>' % BLINK)
+        parts.append('<rect class="cr" x="%.1f" y="%.1f" width="%.1f" '
+                     'height="%.1f" fill="%s"/>'
+                     % (pad + t.width(flat[cursor]) + t.advance("M") * 0.3,
+                        baseline - size * 0.74, t.advance("M"), size * 0.8, FG))
+
+    if scan:
+        # A band of light crossing the block for as long as the page is open,
+        # slow enough to be felt rather than watched, and at the opacity of a
+        # reflection, so nothing under it becomes harder to read.
+        band = round(size * 4)
+        parts.append('<defs><linearGradient id="sc" x1="0" y1="0" x2="0" y2="1">'
+                     '<stop offset="0" stop-color="%s" stop-opacity="0"/>'
+                     '<stop offset=".5" stop-color="%s" stop-opacity=".05"/>'
+                     '<stop offset="1" stop-color="%s" stop-opacity="0"/>'
+                     '</linearGradient></defs>' % (FG, FG, FG))
+        parts.append('<style>@keyframes sw{from{transform:translateY(%dpx)}'
+                     'to{transform:translateY(%dpx)}}'
+                     '.sw{animation:sw %.1fs linear infinite}'
+                     '@media (prefers-reduced-motion:reduce){.sw{display:none}}'
+                     '</style>' % (-band, round(h), max(6.0, h / 26.0)))
+        parts.append('<rect class="sw" x="0" y="0" width="100%%" height="%d" '
+                     'fill="url(#sc)"/>' % band)
 
     if notes:
         # Painted after the covers, so a cover parked to the right of the line
@@ -288,7 +347,7 @@ BLOCKS = {
                   delay=_runtime(TAGLINE, TAGLINE_MODES) - LEAD), [
         "AI/ML RESEARCH  /  CONTINUAL LEARNING  /  BENCHMARKS  /  EDGE",
     ]),
-    "about": (dict(size=22, leading=1.25), [
+    "about": (dict(size=22, leading=1.25, scan=True), [
         "Fourth-year Computer & Electronics Engineering at the UNIVERSIDAD DE",
         "SEVILLA, back from a year of Data Science & AI at the BEIJING INSTITUTE",
         "OF TECHNOLOGY.",
@@ -297,7 +356,7 @@ BLOCKS = {
         "at MIT, pointed at something worth conserving.",
     ]),
     # Label in the bright ink, what it holds in the dim one, on one baseline.
-    "stack": (dict(size=21, leading=1.3), [
+    "stack": (dict(size=21, leading=1.3, scan=True), [
         [("LANGUAGES        ", FG), ("Python / C / C++ / Assembly", DIM)],
         [("DEEP LEARNING    ", FG), ("PyTorch / CUDA / Triton / quantisation", DIM)],
         [("AI / ML          ", FG),
@@ -306,8 +365,9 @@ BLOCKS = {
          ("FastAPI / React / PostgreSQL / pgvector / Docker / Neo4j", DIM)],
         [("SPOKEN           ", FG), ("Spanish / English / Chinese", DIM)],
     ]),
-    "work": (dict(size=21, leading=1.3), [
-        [("2025 - now    ", FG),
+    "work": (dict(size=21, leading=1.3, scan=True), [
+        [("2026 - now    ", FG), ("進行中", FG, CJK)],
+        [("2025 - 2026   ", FG),
          ("Independent AI/ML research - world models, continual", DIM)],
         [("              ", FG),
          ("learning, LLM benchmarking. AI/ML developer at OrgaAI.", DIM)],
@@ -315,21 +375,18 @@ BLOCKS = {
         [("2023 - 2024   ", FG), ("CTO - NetKey, NFC hardware. Closed.", DIM)],
         [("2023          ", FG), ("Speaker - Telefonica innovaTE.", DIM)],
         [("EDUCATION     ", FG),
-         ("BSc Computer & Electronics Engineering, Universidad de", DIM)],
-        [("              ", FG),
-         ("Sevilla, 2023-2027. Data Science & AI at the Beijing", DIM)],
-        [("              ", FG),
-         ("Institute of Technology.", DIM)],
+         ("BSc Computer & Electronics Engineering, Universidad", DIM)],
+        [("              ", FG), ("de Sevilla, 2023-2027.", DIM)],
     ]),
     # Set in caps like the tagline, and sized so the block comes out 179 high
     # -- the height of the loop it sits beside -- at its own scale, so the
     # README shows it 1:1 and the glyphs are never resampled by the browser.
-    "now": (dict(size=26, leading=1.936, pad=14), [
+    "now": (dict(size=26, leading=1.936, pad=14, cursor=2), [
         "> ORGANISING THE AI TALKS AT THE UNIVERSIDAD DE SEVILLA",
         "> RESEARCH ON PUSHING THE TPU STATE OF THE ART",
         "> BUILDING PERSEO, THE ASSISTANT THAT LISTENS AND WATCHES",
     ]),
-    "coords": (dict(size=22, leading=1.25, colors=[DIM, FG]), [
+    "coords": (dict(size=22, leading=1.25, colors=[DIM, FG], cursor=1), [
         "N 42 21 36   W 71 05 31   /   MIT, CAMBRIDGE, MASSACHUSETTS",
         "> NOT THERE YET. SOON THERE.",
     ]),
@@ -367,7 +424,7 @@ def projects_svg():
     """One line a project: the name in the bright ink, what it is in the dim."""
     col = max(len(name) for name, _ in PROJECTS) + 2
     svg([[(name.ljust(col), FG), (desc, DIM)] for name, desc in PROJECTS],
-        "s-projects", size=21, leading=1.45)
+        "s-projects", size=21, leading=1.45, scan=True)
 
 
 if __name__ == "__main__":

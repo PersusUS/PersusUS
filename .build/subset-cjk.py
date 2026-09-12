@@ -30,8 +30,9 @@ CACHE = os.path.join(".build", "cache", "DotGothic16-Regular.ttf")
 OUT = ".build/DotGothic16-subset.ttf"
 LICENCE = ".build/DotGothic16-OFL.txt"
 
-# The margin of the tagline: the Instrumentality Project.
-TEXT = "\u4eba\u985e\u88dc\u5b8c\u8a08\u753b"
+# The margin of the tagline (the Instrumentality Project) and the standing
+# entry in the work block: in progress.
+TEXT = "\u4eba\u985e\u88dc\u5b8c\u8a08\u753b\u9032\u884c\u4e2d"
 
 
 def source():
