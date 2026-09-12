@@ -16,7 +16,7 @@
 
 <div align="center">
 
-<img src="assets/s-tagline.svg" width="728" alt="Jesus Perez Bazarot, 21, Seville. I mean to move the world, and I am starting with AI. One piece at a time, each one left better than I found it. Searching for safe AGI." />
+<img src="assets/s-tagline.svg" width="656" alt="Jesus Perez Bazarot, 21, Seville. I mean to move the world, and I am starting with AI. I work on the parts of AI that break. Searching for safe AGI." />
 
 <img src="assets/s-tags.svg" width="810" alt="AI/ML research, continual learning, benchmarks and evaluation, edge and local-first" />
 
